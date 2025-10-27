@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silly Diner Cook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #loading-overlay {
+            position: fixed; /* Stays in the same place even when scrolling */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(255, 255, 255); /* Matches your body background */
+            display: flex; /* Centers the image */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Ensures it is on top of everything */
+            transition: opacity 2s ease; /* Adds a smooth fade-out effect */
+        }
+        
+        /* When this class is added, the overlay fades out and is no longer clickable */
+        .hidden-overlay {
+            opacity: 0;
+            pointer-events: none; /* Allows clicks to pass through after fade */
+        }
+        /* Custom Styles for the Game Board and Elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: rgb(0, 0, 0); /* Dark background */
+        }
+        
+        /* Main Game Grid (The Restaurant Floor) - Base 4-Column Layout */
+        #game-board {
+            position: relative;
+            width: 800px;    /* balanced size */
+            height: 700px;
+            margin: 0 auto;
+            background: url('Map.png') no-repeat center center;
+            overflow: hidden;
+        }
+
+        #game-board {
+                background: url('Map.png') no-repeat center center;
+                background-size: cover;
+                border: 8px solid rgb(0, 0, 0);
+        }
+
+
+        /* All interactive stations */
+        .station {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            border: 1px dashed #d1d5db;
+            transition: background-color 0.15s, transform 0.1s, box-shadow 0.15s;
+            border-radius: 0.5rem;
+            position: relative; 
+            color: white !important; /* Ensure text is white */
+            font-size: 1.15rem; /* Slightly larger text for better readability */
+            font-weight: 700; /* Make the text bold */
+            
+            /* ADD/UPDATE: Text shadow for high contrast on busy backgrounds */
+            text-shadow: 
+                1px 1px 0 #000, 
+                -1px -1px 0 #000, 
+                1px -1px 0 #000, 
+                -1px 1px 0 #000,
+                0 0 8px rgba(0, 0, 0, 0.5); /* Soft, blurred shadow */
+                
+            padding: 0.5rem; /* Ensure sufficient padding around the text */
+        }
+        
+        .station:hover {
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+            transform: scale(1.02);
+        }
+        
+        .station:active {
+            transform: scale(0.98);
+        }
+        
+                /* Custom Style for Upgraded Tables (T5 and T6) */
+        .station.upgraded-table {
+            /* Set the base image for the upgraded table */
+            background: url('Chairs.png') no-repeat center center !important;
+            background-size: contain !important; 
+            background-color: transparent !important; 
+            
+            /* Ensure the table contents are centered and visible over the image */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hover state to use the second image for visual feedback */
+        .station.upgraded-table:hover {
+            background: url('Chairs-Hover.png') no-repeat center center !important;
+            background-size: contain !important;
+        }
+        /* Specific Station Styles - Base 4-Column Layout */
+        #KITCHEN { 
+            /* Spans all 4 columns initially */
+            grid-area: 1 / 1 / 2 / 5; 
+            background-color: #9ca3af; 
+            color: #1f2937;
+            font-weight: bold;
+            display: flex;
+            align-items: flex-end; 
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        #COUNTER {
+            /* Spans last column on the bottom row initially */
+            grid-area: 3 / 4 / 4 / 5;
+            background-color: #fcd34d; 
+            color: #1f2937;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        #QUEUE {
+            /* Spans first column on the bottom row initially */
+            grid-area: 3 / 1 / 4 / 2;
+            background-color: #d1d5db; 
+            color: #1f2937;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        /* NEW TRASH STATION */
+        #TRASH {
+            /* Spans middle columns on the bottom row initially (4-col: 3/2/4/4) */
+            grid-area: 3 / 2 / 4 / 4;
+            background-color: #a78bfa; 
+            color: #1f2937;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        /* Table Layouts */
+        .table-station {
+            background-color: #e5e7eb;
+            grid-area: auto; /* Will be set dynamically */
+        }
+        
+        /* Player (Flo) */
+        #player {
+            position: absolute;
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 50%;
+            background-image: url('0_front_idle1.png');
+            background-size: cover;
+            transform: translate(-50%, -60%);
+            transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            line-height: 2.5rem; 
+        }
+
+        /* --- Accurate diner layout based on image outlines --- */
+#JUKEBOX { position: absolute; left: 287px; top: 192px; size: 20%; }
+#FRIDGE { position: absolute; left: 448px; top: 156px; }
+#KITCHEN { position: absolute; left: 562px; top: 125px; }
+#COUNTER { position: absolute; left: 549px; top: 197px; }
+#T1 { position: absolute; left: 575px; top: 285px; }
+#T2 { position: absolute; left: 640px; top: 285px; }
+#T3 { position: absolute; left: 706px; top: 285px; }
+#QUEUE { position: absolute; left: 110px; top: 614px; }
+#TRASH { position: absolute; left: 598px; top: 568px; }
+#T4 { position: absolute; left: 658px; top: 424px; }
+#T5 { position: absolute; left: 656px; top: 529px; }
+#T6 { position: absolute; left: 476px; top: 425px; }
+#T7 { position: absolute; left: 478px; top: 529px; }
+#T8 { position: absolute; left: 296px; top: 420px; }
+#T9 { position: absolute; left: 294px; top: 525px; }
+#T10 { position: absolute; left: 116px; top: 425px; }
+#T11 { position: absolute; left: 114px; top: 528px; }
+
+        #player {
+            position: absolute;
+            left: 90px;
+            bottom: 70px;
+            size: 20%;
+        }
+
+        /* Transparent stations (no background boxes) */
+        .station {
+            background: transparent !important;
+            border: none !important;
+            color: white;
+            text-shadow: 0 0 6px black;
+            font-size: 0.9rem;
+        }
+
+        /* Customer State Visualization (No Change) */
+        .customer-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            transition: transform 0.2s;
+        }
+        
+        /* Container for status text and patience bar. (No Change) */
+        .status-detail {
+            opacity: 1; 
+            transition: opacity 0.2s;
+            pointer-events: auto; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Patience Bar (No Change) */
+        .patience-bar {
+            width: 90%;
+            height: 0.5rem;
+            background-color: #d1d5db;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+        
+        .patience-fill {
+            height: 100%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        /* Floating Message for Actions (No Change) */
+        .float-message {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            pointer-events: none;
+            z-index: 30;
+            transform: translateY(10px);
+        }
+        
+        /* Screen Transition Styles (No Change) */
+        .screen-container {
+            transition: opacity 0.3s ease-in-out;
+            min-height: 600px; 
+        }
+        .hidden-screen {
+            display: none;
+            opacity: 0;
+        }
+
+        /* Trash Bar */
+        .trash-bar {
+            width: 90%;
+            height: 0.75rem;
+            background-color: #d1d5db;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-top: 0.25rem;
+            border: 1px solid #374151;
+        }
+        
+        .trash-fill {
+            height: 100%;
+            background-color: #000000; 
+            transition: width 0.3s;
+        }
+        
+        /* layout editor controls */
+        #layout-controls {
+        display:flex;
+        gap:0.5rem;
+        justify-content:center;
+        margin-top:12px;
+        }
+        .layout-btn {
+        padding:0.45rem 0.8rem;
+        border-radius:999px;
+        background: rgba(255,255,255,0.03);
+        color:#fff;
+        border:1px solid rgba(255,255,255,0.06);
+        cursor:pointer;
+        font-weight:600;
+        }
+        .layout-btn.active { background:#6b21a8; }
+
+        .station.layout-drag {
+        outline: 2px dashed rgba(255,255,255,0.6);
+        cursor: grab;
+        user-select: none;
+        z-index: 40;
+        }
+
+        /* snippet modal */
+        #layout-snippet {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: #0b1220;
+        color: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        max-width: 90%;
+        }
+        #layout-snippet pre { white-space: pre-wrap; word-break: break-word; margin: 0; max-height: 60vh; overflow: auto; background: transparent; color:#d1d5db; }
+        #layout-snippet .close { cursor:pointer; margin-top:8px; display:inline-block; padding:6px 10px; border-radius:6px; background:#2563eb; }
+
+                /* --- Improve customer visibility and contrast --- */
+        .customer-display {
+        backdrop-filter: blur(4px);
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+        font-weight: 600;
+        width: 90%;
+        margin: auto;
+        }
+
+        .customer-display .customer-icon {
+        font-size: 1.4rem;
+        filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+        }
+
+        .customer-display .status-detail {
+        margin-left: 2px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        color: #222;
+        font-size: 1.3rem;
+        font-weight: 700;
+        
+        }
+
+        .patience-bar {
+        width: 80px;
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 4px;
+        box-shadow: 0 0 3px rgba(0,0,0,0.3) inset;
+        }
+
+        .patience-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        }
+
+        .bg-green-500 { background-color: #22c55e !important; box-shadow: 0 0 }
+        .selected-ability-outline {
+  outline: 3px solid rgb(61, 28, 20) !important; 
+  outline-offset: 2px;
+  box-shadow: 0 0 5px rgb(61, 28, 20);
+}
+        .ability-active-yan {
+  outline: 3px solid #ff6600 !important;
+  box-shadow: 0 0 24px 8px #ff8800cc, 0 0 3px 2px #facc15;
+  animation: yan-glow 1s infinite alternate;
+}
+@keyframes yan-glow {
+  from { box-shadow: 0 0 16px 4px #ff8800cc, 0 0 3px 2px #facc15; }
+  to   { box-shadow: 0 0 32px 12px #ff6600, 0 0 8px 4px #ffa500; }
+}
+
+.ability-active-pela {
+  outline: 3px solid #b273ff !important;
+  box-shadow: 0 0 24px 8px #b273ffcc, 0 0 3px 2px #d946ef;
+  animation: pela-glow 1s infinite alternate;
+}
+@keyframes pela-glow {
+  from { box-shadow: 0 0 16px 4px #b273ffcc, 0 0 3px 2px #d946ef; }
+  to   { box-shadow: 0 0 32px 12px #8b5cf6, 0 0 8px 4px #a21caf; }
+}
+#backthing {
+  background-image: url(image-removebg-preview\(1\).png);
+  background-size: auto;
+  animation: movebg 10s linear infinite;
+}
+
+@keyframes movebg {
+  0% { background-position: 0 0, 30px 30px; }
+  100% { background-position: 60px 0, 90px 30px; }
+}
+@font-face {
+        font-family: 'Yoster';
+        font-display: swap;
+        src: url('pcsenior.ttf') format('TrueType');
+    }
+/* ---------- Mobile Controls Panel (visible on small screens) ---------- */
+        .mobile-controls {
+            display:none;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 10px;
+            z-index: 80;
+            gap: 8px;
+            align-items:center;
+            justify-content:center;
+            background: rgba(0,0,0,0.18);
+            padding: 6px;
+            border-radius: 999px;
+            backdrop-filter: blur(6px);
+        }
+        .mobile-btn {
+            --size: 44px;
+            width: var(--size);
+            height: var(--size);
+            min-width: var(--size);
+            border-radius: 10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 1.1rem;
+            touch-action: manipulation;
+        }
+        .mobile-btn:active { transform: scale(0.95); }
+
+        @media (max-width: 640px) {
+            .mobile-controls { display:flex; }
+            #game-screen .mt-6 { margin-bottom: 80px; } /* keep space for mobile controls */
+        }
+        #kembaliweb:hover {
+            color: yellow
+        }
+
+        /* ---------- Misc small responsive tweaks ---------- */
+        .status-panel, .upgrade-panel { font-size: clamp(0.75rem, 2vw, 1rem); }
+        /* auto-button active state */
+        .auto-on { outline: 2px solid #34d399; box-shadow: 0 0 12px #34d39966; }
+    </style>
+</head>
+<body  class="p-4 sm:p-8" style="background-color: rgb(0, 0, 0);">
+    <div id="loading-overlay">
+        <img src="Loading (1).png" alt="loading..." style="max-width: 80%; max-height: 80%; object-fit: contain; background-color: white;">
+    </div>
+
+<div id="app" class="max-w-4xl mx-auto shadow-2xl rounded-xl p-4 sm:p-6 text-white" style="background-color: rgb(0, 0, 0);">
+    <div id="game-screen" class="screen-container">
+    
+        <div id="status-panel" class=" p-4 rounded-lg mb-4 flex justify-between flex-wrap text-lg font-mono" style=" font-family: 'Yoster'; background-color:rgb(61, 28, 20)">
+            <div id="game-day" class="text-400 font-bold" style="background-color: rgb(61, 28, 20); color: #f2caad;">Day: 1</div>
+            <div id="game-time" class="text-400 p-4 rounded-lg mb-4 flex justify-between flex-wrap" style=" color: rgb(51, 29, 16); background-color: #f2caad;  font-weight: bolder;"> 0:00</div>
+            <div id="game-score" class="text-white-400">Score: $0</div>
+            <div id="game-message" class="w-full text-center mt-2 text-sm text-white-300" style="font-weight: bold;">Welcome Flo!, time to serve!</div>
+        </div>
+        
+        <div id="upgrade-panel" style="display: none; background-color: rgb(0, 0, 0);" class="p-3 rounded-lg mb-6 text-xs font-mono flex justify-around border-t border-black">
+            </div>
+
+        <div id="game-board" class="absolute" style="font-family: 'Yoster';">
+                <!-- Mobile controls (visible on small screens) -->
+    <div id="mobile-controls" class="mobile-controls" aria-hidden="true">
+        <button id="mobile-queue" class="mobile-btn" title="Queue">🧍</button>
+        <button id="mobile-kitchen" class="mobile-btn" title="Kitchen">🍳</button>
+        <button id="mobile-fridge" class="mobile-btn" title="Fridge">🥤</button>
+        <button id="mobile-counter" class="mobile-btn" title="Counter">💵</button>
+        <button id="mobile-trash" class="mobile-btn" title="Trash">🗑️</button>
+        <button id="mobile-jukebox" class="mobile-btn" title="Jukebox">🎵</button>
+        <button id="mobile-ability" class="mobile-btn" title="Ability">⚡</button>
+                <!-- NEW: Mobile Auto Serve button -->
+        <button id="mobile-auto" class="mobile-btn" title="Auto-Serve">🤖</button>
+    </div>
+                <img src="Kitchen.png" alt="" style="position: absolute; top: 53.2px; right: 5px; width: 350px; height: 300px;">
+            <div id="KITCHEN" class="station" data-type="kitchen">
+                <span class="text-2xl">🍳</span> Kitchen Pass
+                <div id="food-ready-count" class="absolute top-1 right-2 text-sm bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center">0</div>
+            </div>
+            
+            <div id="T1" class="station table-station" data-type="table"><span class="table-label"></span></div>
+            <div id="T2" class="station table-station" data-type="table"><span class="table-label"></span></div>
+            <div id="T3" class="station table-station" data-type="table"><span class="table-label"></span></div>
+            <div id="T4" class="station table-station" data-type="table" style="display: flex; z-index: 10">
+                <span class="table-label"></span>
+            </div>
+            <img src="Chairs2.png" alt="" style="z-index: 0; position: absolute; right: -30px; top: 238px; width: 300px; pointer-events: none; " />
+            <div id="T5" class="station table-station hidden" data-type="table" style="z-index: 10;">
+                <span class="table-label" ></span></div>
+            <img id="T5-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: -30px; top: 340px; pointer-events: none;" />
+            <div id="T6" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T6-image" class="hidden"src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 150px; top: 238px; pointer-events:none;" />
+            <div id="T7" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T7-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 150px; top: 340px; pointer-events:none;" />
+            <div id="T8" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T8-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 330px; top: 238px; pointer-events:none;" />
+            <div id="T9" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T9-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 330px; top: 340px; pointer-events:none;" />
+            <div id="T10" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T10-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 510px; top: 238px; pointer-events:none;" />
+            <div id="T11" class="station table-station hidden" data-type="table" style="z-index: 10;"><span class="table-label"></span></div>
+            <img id="T11-image" class="hidden" src="Chairs2.png" alt="" style="z-index: 0; position: absolute; width: 300px; right: 510px; top: 340px; pointer-events:none;" />
+            <div id="QUEUE" class="station" data-type="queue">
+                <span class="text-2xl">🧍</span> Queue
+                <div id="queue-count" class="absolute bottom-1 right-2 text-sm bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center">0</div>
+            </div>
+
+            <div id="TRASH" class="station" data-type="trash">
+                <span class="text-2xl">🗑️</span> Diner Cleanliness
+                <div id="trash-status" class="w-full flex flex-col items-center mt-1">
+                    <div id="trash-level-text" class="text-sm font-semibold text-gray-700">Clean: 0%</div>
+                    <div class="trash-bar">
+                        <div id="trash-fill" class="trash-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="FRIDGE" class="station" data-type="fridge" style="width: 80px; height: 120px;">
+                <span class="text-2xl">🥤</span>Fridge
+                <div id="drink-stock" class="absolute top-1 right-2 text-sm bg-cyan-500 rounded-full w-6 h-6 flex items-center justify-center">∞</div>
+            </div>
+            <img id="jukebox-img" src="Jukebox1.png" alt="" style="z-index: 0; position: absolute; top: 10px; width: 200px; height: 320px; right: 343px;">
+            <div id="JUKEBOX" class="station" data-type="jukebox" style="z-index: 10;">
+            <span class="text-2xl">🎵</span> Jukebox
+            </div>
+
+            <div id="COUNTER" class="station" data-type="counter" style="width: 200px; height: 70px;">
+                <span class="text-2xl"><img src="Tip.png" style="width: 50px; height: max-content;" alt=""></span> Counter
+            </div>
+
+            <div id="player"></div>
+            <audio id="jukebox-audio" src="music lomba.mp3" loop></audio>
+<audio id="fridge-audio" src="fridge_sound.mp3" preload="auto"></audio> 
+            <audio id="table-audio" src="platedrop.mp3" preload="auto"></audio> 
+            <audio id="counter-audio" src="counter_sound.mp3" preload="auto"></audio> 
+            <audio id="trash-audio" src="trash_sound.mp3" preload="auto"></audio> 
+            <audio id="queue-audio" src="queue_sound.mp3" preload="auto"></audio> 
+            <audio id="kitchen-audio" src="kitchen_sound.mp3" preload="auto"></audio>
+            </div>
+        
+        <div class="mt-6 text-center space-x-2 flex justify-center flex-wrap" style=" font-family: 'Yoster';">
+            <button id="end-day-button" class="px-4 py-2-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg transition duration-150", style="background-color: rgb(61, 41, 28); color
+            :#f2caad">
+                End Day
+            </button>
+            <button id="go-to-shop-button" class="px-4 py-2 hover:bg-purple-700 text-white font-bold rounded-full shadow-lg transition duration-150", style="background-color: rgb(61, 41, 28); color
+            :#f2caad">
+                Go to Shop
+            </button>
+            <button id="reset-button" class="px-4 py-2-600 hover:bg-red-700 text-white font-bold rounded-full shadow-lg transition duration-150", style="background-color: rgb(61, 41, 28); color
+            :#f2caad">
+                Start Day 1
+            </button>
+            <button id="ability-btn" class="px-5 py-5 font-bold rounded-full shadow-lg transition duration-150 flex items-center" style="background:#eac1b1; color:#fff; border:2px solid #ffffff; min-width:3.2rem; justify-content:center; font-size:1rem;"
+  style="background:#6b7280; color:#fff; border:2px solid #ffffff; min-width:3.2rem; justify-content:center; font-size:1rem; width: 50px; height: 50px;"
+  title="Toggle Auto-Serve (prioritizes customers)">
+  <!-- Icon and cooldown overlay will be set in JS -->
+</button>
+        </div>
+                            <a  href="index.html"id="kembali-button" class="px-4 py-2-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg transition duration-150", style=" font-family: 'Yoster'; position: fixed; bottom: 0vh; left: 44vw;line-height: 5vh; background-color: rgb(61, 41, 28); color
+            :#f2caad">
+                Kembali ke web
+        </a>
+    </div>
+
+        <!-- Layout Editor Controls -->
+    
+    <div id="shop-screen" class="screen-container hidden-screen p-6" style=" font-family: 'Yoster'; background-color: rgb(61, 28, 20);">
+        <h2 class="text-3xl font-extrabold text-white-400 mb-4 text-center" style="color: #f2caad">UPGRADE SHOP</h2>
+        <p class="text-gray-400 mb-6 text-center" style="color: #f2caad">Spend all your hard earned money to ease the next day!</p>
+
+        <div class="text-center mb-8">
+            <button id="purchase-upgrade-button" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-xl shadow-2xl transition duration-150 transform hover:scale-105" disabled>
+                Purchase Random Upgrade ($50)
+            </button>
+            <div class="text-center mt-3">
+  <button id="shop-get-ability-btn" style="background-color: #f2caad; color: rgb(61, 28, 20);"class="px-6 py-2 bg-gray-700 hover:bg-green-700 text-white font-bold rounded-full shadow transition" >
+    Upgrade Manager (250$)
+  </button>
+
+  <span id="current-character-label" class="ml-3 text-yellow-300"></span>
+</div>
+            <p id="shop-message" class="text-sm mt-3 text-red-400 hidden">Not enough money!</p>
+        </div>
+
+        <h3 class="text-xl font-bold text-yellow-400 mb-3 border-b border-gray-700 pb-1">Current Bonuses</h3>
+        <div id="shop-current-upgrades" style="background: #f2caad"class="bg-gray-900 p-4 rounded-lg mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
+            </div>
+
+        <h3 class="text-xl font-bold text-yellow-400 mb-3 border-b border-gray-700 pb-1">Potential Upgrades</h3>
+        <ul id="upgrade-list" class="space-y-4">
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center"style="background: #f2caad">
+                <span class="text-2xl mr-3">🏢</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Restaurant Expansion:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Adds tables T5 and T6, greatly increasing customer capacity.</span>
+                </div>
+            </li>
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <span class="text-2xl mr-3">⚡</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Speedy Prep Station:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Reduces the food prep time by 0.5 seconds per upgrade. (Max 50% reduction of base time)</span>
+                </div>
+            </li>
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <span class="text-2xl mr-3">🧘</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Zen Waiter:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Increases customer patience (makes them wait longer).</span>
+                </div>
+            </li>
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <span class="text-2xl mr-3">🍕</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Double Tray:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Increases Flo's food carrying capacity. (Stacks up to 4)</span>
+                </div>
+            </li>
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <span class="text-2xl mr-3">💎</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">VIP Bonus:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Increases all tips received by a percentage.</span>
+                </div>
+            </li>
+             <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <span class="text-2xl mr-3">🧹</span>
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Janitor's Kit:</strong> 
+                    <span class="text-sm text-gray-300"style="color: rgb(61, 28, 20)">Reduces the rate at which trash (and dirtiness) spawns.</span>
+                </div>
+            </li>
+            <li class="bg-gray-700 p-3 rounded-lg shadow flex items-center" style="background: #f2caad">
+                <img src="Tax Paper.png" alt="" style="width: 30px; height: 30px;" class="mr-3">
+                <div>
+                    <strong class="text-blue-300" style="color: rgb(61, 28, 20)">Tax Reduction:</strong> 
+                    <span class="text-sm text-gray-300" style="color: rgb(61, 28, 20)">Reduces tax that you have to pay by 2%!</span>
+                </div>
+            </li>
+        </ul>
+        <!-- New ABILITY SECTION -->
+        <div id="ability-section" class="mt-6 bg-gray-800 rounded-lg p-4 shadow text-left" style="background: #f2caad">
+            <h3 class="text-2xl font-bold text-yellow-400 mb-2" style="color: rgb(61, 28, 20)">Manager Skills</h3>
+            <p class="text-gray-400 mb-6 text-center" style="color: rgb(61, 28, 20)">Ability levels are increased if duplicates are obtained.</p>
+                <button id="switch-character-btn" class="ml-2 px-4 py-2 bg-gray-700 hover:bg-green-700 text-white font-bold rounded-full shadow transition text-center text-center mb-8"
+        style="min-width:3.2rem; font-size:1rem; transform: translateX(50%); background-color: rgb(61, 28, 20); color: #f2caad;">
+        Switch Character (250$)
+    </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div id="yan-ability-desc" class="bg-gray-700 rounded-lg p-3" style="background: rgb(61, 28, 20)">
+                    <div class="flex items-center mb-1">
+                        <img src='Skill_ Faster Speed.png' style='width: 30px; height: 30px;' class="mr-3">
+                        <span class="font-bold text-blue-300" style="color: #f2caad">Yan: Burning Excitement</span>
+                    </div>
+                    <div class="text-sm text-gray-200 mb-1">
+                        Moves <span id="yan-move-bonus">10%</span> faster and cooking time speed is increased by <span id="yan-cook-bonus">1.5</span>s for 15 seconds.<br>
+                        <span class="text-yellow-400">Ability goes on cooldown after the duration ends.</span>
+                    </div>
+                    <div class="text-xs text-gray-400 italic">Each ability level: +2% move speed, +0.2s cooking time every 5 levels</div>
+                    <div class="text-green-400 text-xs">Level: <span id="yan-ability-level">1</span></div>
+                </div>
+                <div id="pela-ability-desc" class="bg-gray-700 rounded-lg p-3 "style="background: rgb(61, 28, 20)">
+                    <div class="flex items-center mb-1">
+                        <img src='Skill_ Sing Of Patience.png' style='width: 30px; height: 30px;' class="mr-3">
+                        <span class="font-bold text-blue-300" style="color: #f2caad">Pela: Sweet Melody</span>
+                    </div>
+                    <div class="text-sm text-gray-200 mb-1">
+                        Adds <span id="pela-patience-bonus">5%</span> of customer patience, then reduces customer patience decay by <span id="pela-decay-bonus">20%</span> for 15 seconds.<br>
+                        <span class="text-yellow-400">Ability goes on cooldown after the duration ends.</span>
+                    </div>
+                    <div class="text-xs text-gray-400 italic">Each ability level: +1% patience, +5% decay reduction every 5 levels</div>
+                    <div class="text-green-400 text-xs">Level: <span id="pela-ability-level">1</span></div>
+                </div>
+            </div>
+        <div class="mt-8 text-center">
+            <button id="back-to-diner-button" style="background: rgb(61, 28, 20); color: #f2caad;"class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg transition duration-150">
+                Back to Diner
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ----------------- Minimal Mobile Controls wiring + small adjustments -----------------
+   This script adds a mobile control panel and wires the mobile buttons to the existing
+   handleAction/triggerAbility functions. It also ensures the player is positioned via
+   updateLayout (so we removed the fixed px player placement). */
+
+(function () {
+    // Wait until DOM elements referenced by earlier code exist
+    function q(id) { return document.getElementById(id); }
+
+    // If elements mapping (built later in the original file) doesn't exist yet, create a minimal one
+    // Many of the original functions expect variables like 'elements' and functions to be available.
+    // The rest of your existing script already defines `elements`, `updateLayout`, etc.
+    // Here we just wire mobile controls and ensure responsiveness hooks.
+    function setupMobileControls() {
+        const mobileControls = q('mobile-controls');
+        if (!mobileControls) return;
+
+        const map = {
+            'mobile-queue': 'QUEUE',
+            'mobile-kitchen': 'KITCHEN',
+            'mobile-fridge': 'FRIDGE',
+            'mobile-counter': 'COUNTER',
+            'mobile-trash': 'TRASH',
+            'mobile-jukebox': 'JUKEBOX'
+        };
+
+        // Wire each button to call the game's handleAction (if available)
+        Object.keys(map).forEach(btnId => {
+            const btn = q(btnId);
+            if (!btn) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const stationId = map[btnId];
+                // Prefer using handleAction if defined, else fallback to programmatic click
+                if (typeof handleAction === 'function') {
+                    handleAction(stationId);
+                } else {
+                    const el = q(stationId);
+                    if (el) el.click();
+                }
+            });
+        });
+
+        // Ability button
+        const abilityBtn = q('mobile-ability');
+        if (abilityBtn) {
+            abilityBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (typeof triggerAbility === 'function') triggerAbility();
+                else {
+                    const aBtn = q('ability-btn');
+                    if (aBtn) aBtn.click();
+                }
+            });
+        }
+
+                // Auto-serve mobile button (we will wire to toggleAutoMode later once it's defined)
+        const autoBtn = q('mobile-auto');
+        if (autoBtn) {
+            autoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // toggleAutoMode may be defined later; prefer direct call if available
+                if (typeof toggleAutoMode === 'function') {
+                    toggleAutoMode();
+                } else {
+                    // fallback: toggle CSS indicator locally until toggleAutoMode available
+                    autoBtn.classList.toggle('auto-on');
+                }
+            });
+        }
+
+        // Show / hide the mobile-controls container based on screen width
+        // Replace the updateVisibility function inside setupMobileControls with this:
+function updateVisibility() {
+    // Show controls if any of:
+    //  - viewport <= 640px
+    //  - device has touch (navigator.maxTouchPoints > 0 or 'ontouchstart' in window)
+    //  - pointer is coarse (touch-first devices often report coarse)
+    const isSmallViewport = window.matchMedia && window.matchMedia('(max-width:640px)').matches;
+    const hasTouchAPI = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+    const hasCoarsePointer = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+
+    const shouldShow = isSmallViewport || hasTouchAPI || hasCoarsePointer;
+
+    if (shouldShow) {
+        mobileControls.setAttribute('aria-hidden', 'false');
+        mobileControls.style.display = 'flex';
+    } else {
+        mobileControls.setAttribute('aria-hidden', 'true');
+        mobileControls.style.display = 'none';
+    }
+}
+        updateVisibility();
+        window.addEventListener('resize', updateVisibility);
+        window.addEventListener('orientationchange', updateVisibility);
+    }
+
+    // When the page is fully loaded (and the rest of the script defined elements, handlers),
+    // set up mobile controls. Using setTimeout to allow original initDOM to run first.
+    window.addEventListener('load', () => setTimeout(setupMobileControls, 100));
+})();
+// --- Configuration ---
+    const CONFIG = {
+        DAY_DURATION_SECONDS: 120, // 2 minutes
+        TICK_INTERVAL_MS: 1000,
+        MOVEMENT_DURATION_MS: 500,
+        BASE_PATIENCE_START: 100, 
+        PATIENCE_DECAY_RATE: 5, 
+        TABLE_COUNT: 4, 
+        BASE_TIP: 50,
+        PATIENCE_BONUS_MULTIPLIER: 0.5,
+        SHOP_BASE_COST: 50, // Renamed from SHOP_COST to BASE_COST
+        SHOP_COST_INCREASE_PERCENT: 0.5, // NEW: 50% increase per upgrade
+        BASE_FOOD_PREP_TIME: 5000, // 5 seconds base cook time
+        MAX_FOOD_PREP_TIME_REDUCTION: 2500, // Max 50% reduction (2.5 seconds)
+        MAX_TRAY_CAPACITY: 4, 
+        BASE_CLEANING_TIME: 3000, // Time it takes to clean 100% trash
+        CLEANING_PATIENCE_PENALTY: 1, // Extra patience decay if trash is high
+        TRASH_THRESHOLD_PERCENTAGE: 50, // Threshold for patience penalty
+        // NEW: Drink Configuration
+        DRINK_BONUS_PATIENCE: 30,             // Add 30 seconds (or ticks) to patience
+        DRINK_BONUS_TIP_MULTIPLIER: 0.5,      // 50% increase on the base tip
+    };
+
+    // --- Upgrade Definitions --- 
+    const UPGRADES = [
+        { 
+            name: 'Zen Waiter', 
+            icon: '🧘',
+            effect: 'Increases customer patience.', 
+            apply: (state) => {
+                state.upgrades.patienceLevel += 20; 
+                return `Patience increased! Base patience is now ${CONFIG.BASE_PATIENCE_START + state.upgrades.patienceLevel}.`;
+            }
+        },
+        { 
+            name: 'Double Tray', 
+            icon: '🍕',
+            effect: `Increases Flo's food carrying capacity (Max ${CONFIG.MAX_TRAY_CAPACITY}).`, 
+            apply: (state) => {
+                if (state.upgrades.trayCapacity < CONFIG.MAX_TRAY_CAPACITY) {
+                    state.upgrades.trayCapacity++;
+                    return `Flo can now carry ${state.upgrades.trayCapacity} food orders! (Max ${CONFIG.MAX_TRAY_CAPACITY})`;
+                } else {
+                    state.upgrades.tipMultiplier += 0.10;
+                    return `Tray is maxed! Enjoy a small Tip Bonus (x${state.upgrades.tipMultiplier.toFixed(2)}).`;
+                }
+            }
+        },
+        { 
+            name: 'VIP Bonus', 
+            icon: '💎',
+            effect: 'Increases all tips received.', 
+            apply: (state) => {
+                state.upgrades.tipMultiplier += 0.25; 
+                return `Tip multiplier increased to x${state.upgrades.tipMultiplier.toFixed(2)}!`;
+            }
+        },
+        { 
+            name: 'Restaurant Expansion', 
+            icon: '🏢',
+            effect: 'Adds tables T5 and T6 (4 to 6 capacity).', 
+            apply: (state) => {
+                if (state.upgrades.tableCapacity < 11) {
+                    state.upgrades.tableCapacity++;
+                    updateLayout(state.upgrades.tableCapacity); // Apply the new 6-table layout
+                    return `Restaurant expanded! You now have 6 tables!`;
+                } else {
+                    // Alternative bonus if already maxed
+                    state.upgrades.patienceLevel += 10;
+                    return `Expansion maxed! Enjoy a small Patience Bonus.`;
+                }
+            }
+        },
+        { 
+            name: 'Speedy Prep Station', 
+            icon: '⚡',
+            effect: 'Reduces cook time by 0.5s per upgrade. (Max 50% reduction)', 
+            apply: (state) => {
+                // Max reduction is 2500ms (2.5s)
+                if (state.upgrades.baseCookTimeReduction * 1000 < CONFIG.MAX_FOOD_PREP_TIME_REDUCTION) { 
+                    state.upgrades.baseCookTimeReduction = Math.min(2.5, state.upgrades.baseCookTimeReduction + 0.5); 
+                    const reduction = state.upgrades.baseCookTimeReduction;
+                    return `Cook time reduced by ${reduction.toFixed(1)}s!`;
+                } else {
+                    state.upgrades.patienceLevel += 10;
+                    return `Cook time is maxed out (50% faster)! Enjoy a small Patience Bonus.`;
+                }
+            }
+        },
+        // NEW UPGRADE: Janitor's Kit
+        { 
+            name: 'Janitor\'s Kit', 
+            icon: '🧹',
+            effect: 'Reduces the rate at which trash spawns (Max 50% reduction).', 
+            apply: (state) => {
+                // Max reduction of 50% (multiplier 0.5)
+                if (state.upgrades.trashSpawnMultiplier > 0.5) { 
+                    state.upgrades.trashSpawnMultiplier = Math.max(0.5, state.upgrades.trashSpawnMultiplier - 0.1); 
+                    const reduction = (1 - state.upgrades.trashSpawnMultiplier) * 100;
+                    return `Trash spawn rate reduced! Current reduction: ${reduction.toFixed(0)}% slower.`;
+                } else {
+                    state.upgrades.patienceLevel += 10;
+                    return `Trash reduction is maxed out (50% slower)! Enjoy a small Patience Bonus.`;
+                }
+            }
+        },
+        { 
+        name: 'Tax Consultant',
+        icon: `<img src='Tax Paper.png' style='width: 24px; height: 24px;' alt='Tax Icon'>`,
+        effect: 'Reduces end-of-day tax by 2% per upgrade.',
+        apply: (state) => {
+            state.upgrades.taxReductionPct = (state.upgrades.taxReductionPct || 0) + 2;
+            return `Tax reduced by ${state.upgrades.taxReductionPct}% (applied at end of day)!`;
+        }
+        },
+        {
+        name: 'Rush Hour Deal',
+        icon: '⏩',
+        effect: 'Customers spawn faster! (Reduces min/max interval by 1s per upgrade, minimum 2s/4s)',
+        apply: (state) => {
+            // Add to state.upgrades.customerSpawnFasterLevel
+            state.upgrades.customerSpawnFasterLevel = (state.upgrades.customerSpawnFasterLevel || 0) + 1;
+            return `Rush Hour! Customers now spawn even faster. (Level ${state.upgrades.customerSpawnFasterLevel})`;
+        }},
+            ];
+
+            const ABILITY_CONFIG = {
+    yan: {
+        baseMove: 10, // %
+        movePerLevel: 2, // % per level
+        baseCook: 1.5, // seconds
+        cookPer5Levels: 0.2, // +0.2s every 5 levels
+        duration: 15, // seconds
+        cooldown: 20 // seconds
+    },
+    pela: {
+        basePatience: 5, // percent
+        patiencePerLevel: 1, // +1% per level
+        baseDecay: 20, // percent
+        decayPer5Levels: 5, // +5% every 5 levels
+        duration: 15,
+        cooldown: 20
+    },
+    baseCost: 250,
+    costMultiplier: 1.5
+};
+
+// --- Game State --- 
+    const gameState = {
+        selectedCharacter: null,
+        ability: {
+    cooldown: 0, // seconds left on cooldown (0 = ready)
+    duration: 0, // seconds left on active ability
+    active: false, // whether ability is active
+    state: "ready", // or "active" or "cooldown"
+    type: null // "Yan" or "Pela"
+},      
+        jukeboxMusicOn: false,
+        isGameRunning: false,
+        currentDay: 1, 
+        score: 0,
+        playerLocation: 'QUEUE',
+        playerIsMoving: false,
+        playerActionQueue: [],
+        playerCarryingFood: 0, 
+        playerCarryingDrinks: 0,
+        tables: {}, 
+        customers: [], 
+        foodReadyCount: 0,
+        nextCustomerArrival: 5, 
+        nextCustomerId: 1,
+        taxReductionPct: 0, // Percentage of tax reduction from upgrades
+        customerSpawnFasterLevel: 0, // NEW UPGRADE
+        
+        // NEW TRASH STATE
+        trashLevel: 0, // 0 to 100
+        maxTrash: 100,
+        trashDecayRate: 10, // Amount of trash cleaned per second of cleaning
+        trashSpawnRate: 3, // Base chance (out of 100) per tick to increase trash by 1-5
+
+        // NEW SHOP STATE
+        upgradeCost: CONFIG.SHOP_BASE_COST, // Current cost of an upgrade
+        upgradesPurchased: 0, // Total number of upgrades bought
+
+        upgrades: {
+            patienceLevel: 0,    
+            trayCapacity: 1,     
+            tipMultiplier: 1,    
+            tableCapacity: CONFIG.TABLE_COUNT, 
+            baseCookTimeReduction: 0, 
+            trashSpawnMultiplier: 1.0, 
+            drinkSystemUnlocked: true,
+            drinkPatienceBonus: 0,
+        },
+        abilityLevels: {
+            Yan: 1,
+            Pela: 1
+        },
+        abilityCosts: {
+            Yan: ABILITY_CONFIG.baseCost,
+            Pela: ABILITY_CONFIG.baseCost
+        },
+        abilityGetCost: ABILITY_CONFIG.baseCost,
+        selectedCharacter: "Yan", // default to Yan
+        _originalPrepTime: CONFIG.BASE_FOOD_PREP_TIME,
+        _originalMoveTime: CONFIG.MOVEMENT_DURATION_MS,
+        _originalPatienceDecay: CONFIG.PATIENCE_DECAY_RATE,
+    };
+    function updateAbilityDisplays() {
+    // Yan
+    const levelYan = gameState.abilityLevels.Yan;
+    const moveBonus = ABILITY_CONFIG.yan.baseMove + ABILITY_CONFIG.yan.movePerLevel * (levelYan-1);
+    const cookBonus = ABILITY_CONFIG.yan.baseCook + Math.floor((levelYan-1)/5) * ABILITY_CONFIG.yan.cookPer5Levels;
+    document.getElementById('yan-move-bonus').textContent = `${moveBonus}%`;
+    document.getElementById('yan-cook-bonus').textContent = `${cookBonus.toFixed(1)}`;
+    document.getElementById('yan-ability-level').textContent = levelYan;
+    if (document.getElementById('shop-yan-move-bonus')) {
+        document.getElementById('shop-yan-move-bonus').textContent = `${moveBonus}%`;
+        document.getElementById('shop-yan-cook-bonus').textContent = `${cookBonus.toFixed(1)}`;
+        document.getElementById('shop-yan-ability-level').textContent = levelYan;
+    }
+
+    // Pela
+    const levelPela = gameState.abilityLevels.Pela;
+    const patienceBonus = ABILITY_CONFIG.pela.basePatience + ABILITY_CONFIG.pela.patiencePerLevel * (levelPela-1);
+    const decayBonus = ABILITY_CONFIG.pela.baseDecay + Math.floor((levelPela-1)/5) * ABILITY_CONFIG.pela.decayPer5Levels;
+    document.getElementById('pela-patience-bonus').textContent = `${patienceBonus}%`;
+    document.getElementById('pela-decay-bonus').textContent = `${decayBonus}%`;
+    document.getElementById('pela-ability-level').textContent = levelPela;
+    if (document.getElementById('shop-pela-patience-bonus')) {
+        document.getElementById('shop-pela-patience-bonus').textContent = `${patienceBonus}%`;
+        document.getElementById('shop-pela-decay-bonus').textContent = `${decayBonus}%`;
+        document.getElementById('shop-pela-ability-level').textContent = levelPela;
+    }
+    // Highlight the selected ability
+    const yanBox = document.getElementById('yan-ability-desc');
+    const pelaBox = document.getElementById('pela-ability-desc');
+    const abilityvisual = document.getElementById('game-board');
+    if (yanBox && pelaBox && abilityvisual) {
+        yanBox.classList.remove('selected-ability-outline', 'ability-active-yan', 'ability-active-pela');
+        pelaBox.classList.remove('selected-ability-outline', 'ability-active-yan', 'ability-active-pela');
+        abilityvisual.classList.remove('ability-active-yan', 'ability-active-pela');
+        if (gameState.selectedCharacter === "Yan") {
+            yanBox.classList.add('selected-ability-outline');
+        } else {
+            pelaBox.classList.add('selected-ability-outline');
+        }
+        // Visual indicator if ability is ACTIVE
+        if (gameState.ability.active && gameState.ability.type === "Yan") {
+            abilityvisual.classList.add('ability-active-yan');
+        }
+        if (gameState.ability.active && gameState.ability.type === "Pela") {
+            abilityvisual.classList.add('ability-active-pela');
+        }
+    }
+}
+    function updateGetAbilityButtons() {
+    // Shop screen
+    const btnShop = document.getElementById("shop-get-ability-btn");
+    btnShop.disabled = (gameState.score < gameState.abilityGetCost) || gameState.isGameRunning;
+    btnShop.textContent = `Upgrade Manager ($${gameState.abilityGetCost})`;
+
+    // Main screen
+    const btnMain = document.getElementById("shop-get-ability-btn");
+    btnMain.disabled = (gameState.score < gameState.abilityGetCost) || gameState.isGameRunning;
+    btnMain.textContent = `Upgrade Manager ($${gameState.abilityGetCost})`;
+}
+function getRandomAbilityType() {
+    return (Math.random() < 0.5) ? "Yan" : "Pela";
+}
+
+function handleGetAbility() {
+    if (gameState.score < gameState.abilityGetCost) return;
+    gameState.score -= gameState.abilityGetCost;
+
+    const roll = getRandomAbilityType();
+    gameState.abilityLevels[roll]++;
+    logMessage(`Gained ${roll} ability! Now Level ${gameState.abilityLevels[roll]}.`);
+    updateAbilityDisplays();
+
+    // Increase next cost
+    gameState.abilityGetCost = Math.ceil(gameState.abilityGetCost * ABILITY_CONFIG.costMultiplier / 5) * 5;
+    updateGetAbilityButtons();
+    renderGame();
+}
+
+function updateAbilityButton() {
+    const btn = document.getElementById('ability-btn');
+    let char = gameState.selectedCharacter;
+    btn.innerHTML = (char === "Yan" ? `<img src='Skill_ Faster Speed.png' style='width: 30px; height: 30px;'>` : `<img src='Skill_ Sing Of Patience.png' style='width: 30px; height: 30px;'>`) +
+        (gameState.ability.cooldown > 0
+            ? `<span style="font-size:0.8rem; margin-left:6px; color:#ccc;">${gameState.ability.cooldown}s</span>`
+            : "");
+    btn.title = (char === "Yan"
+        ? "Yan: Burning Excitement"
+        : "Pela: Sweet Melody");
+    btn.disabled = gameState.ability.cooldown > 0 || gameState.ability.active || !gameState.isGameRunning;
+}
+function flashPlayerMessage(message, bgColor = 'bg-yellow-500', textColor = 'text-black') {
+    const player = document.getElementById('player');
+    if (!player) return;
+
+    // Remove any existing player flash message
+    const oldFloat = document.querySelector('.float-player-message');
+    if (oldFloat && oldFloat.parentNode) oldFloat.parentNode.removeChild(oldFloat);
+
+    const float = document.createElement('div');
+    float.className = `float-message float-player-message ${bgColor} ${textColor}`;
+    float.textContent = message;
+
+    // Get player position relative to #game-board
+    const playerRect = player.getBoundingClientRect();
+    const boardRect = document.getElementById('game-board').getBoundingClientRect();
+
+    float.style.left = `${(playerRect.left - boardRect.left) + playerRect.width / 2}px`;
+    float.style.top = `${(playerRect.top - boardRect.top)}px`;
+    float.style.transform = 'translate(-50%, -100%)';
+
+    document.getElementById('game-board').appendChild(float);
+
+    setTimeout(() => {
+        float.style.opacity = '1';
+        float.style.transform = 'translate(-50%, -150%)';
+    }, 50);
+
+    setTimeout(() => {
+        float.style.opacity = '0';
+        float.style.transform = 'translate(-50%, -200%)';
+        setTimeout(() => {
+            if (float.parentNode) float.parentNode.removeChild(float);
+        }, 500);
+    }, 1000);
+}
+function triggerAbility() {
+    if (gameState.ability.active || gameState.ability.cooldown > 0 || !gameState.isGameRunning) return;
+    let char = gameState.selectedCharacter;
+    gameState.ability.type = char;
+    if (char === "Yan") {
+        // Yan: Burning Excitement
+        const level = gameState.abilityLevels.Yan;
+        const movePercent = ABILITY_CONFIG.yan.baseMove + ABILITY_CONFIG.yan.movePerLevel * (level-1);
+        const cookBonus = ABILITY_CONFIG.yan.baseCook + Math.floor((level-1)/5) * ABILITY_CONFIG.yan.cookPer5Levels;
+        gameState.ability.active = true;
+        gameState.ability.duration = ABILITY_CONFIG.yan.duration;
+        gameState.ability.state = "active";
+        gameState._originalMoveDur = CONFIG.MOVEMENT_DURATION_MS;
+        gameState._originalPrepTime = CONFIG.BASE_FOOD_PREP_TIME;
+        CONFIG.MOVEMENT_DURATION_MS = Math.floor(CONFIG.MOVEMENT_DURATION_MS * 100 / (100 + movePercent));
+        CONFIG.BASE_FOOD_PREP_TIME = Math.max(500, CONFIG.BASE_FOOD_PREP_TIME - cookBonus*1000);
+        logMessage(`Yan's Burning Excitement! Move +${movePercent}%, Cooking -${cookBonus}s for 15s!`, "text-red-400");
+        flashPlayerMessage("I'm feelin fired up!", "bg-orange-400", "text-black");
+    } else if (char === "Pela") {
+        // Pela: Sweet Melody
+        const level = gameState.abilityLevels.Pela;
+        const patienceBonus = ABILITY_CONFIG.pela.basePatience + ABILITY_CONFIG.pela.patiencePerLevel * (level-1);
+        const decayBonus = ABILITY_CONFIG.pela.baseDecay + Math.floor((level-1)/5) * ABILITY_CONFIG.pela.decayPer5Levels;
+        gameState.ability.active = true;
+        gameState.ability.duration = ABILITY_CONFIG.pela.duration;
+        gameState.ability.state = "active";
+        // Add patience to all customers
+        Object.values(gameState.tables).forEach(table => {
+            if (table.customer) {
+                table.customer.patience += Math.floor(table.customer.patience * (patienceBonus/100));
+            }
+        });
+        gameState._originalPatienceDecay = CONFIG.PATIENCE_DECAY_RATE;
+        CONFIG.PATIENCE_DECAY_RATE = Math.max(1, Math.floor(CONFIG.PATIENCE_DECAY_RATE * (100-decayBonus)/100));
+        logMessage(`Pela's Sweet Melody! +${patienceBonus}% patience, decay reduced by ${decayBonus}% for 15s!`, "text-blue-400");
+        flashPlayerMessage("Here's one of my plays!", "bg-blue-400", "text-white");
+    }
+    updateAbilityButton();
+}
+    // --- DOM Elements ---
+    const elements = {
+        app: document.getElementById('app'),
+        gameScreen: document.getElementById('game-screen'),
+        shopScreen: document.getElementById('shop-screen'),
+        board: document.getElementById('game-board'),
+        player: document.getElementById('player'),
+        time: document.getElementById('game-time'),
+        score: document.getElementById('game-score'),
+        day: document.getElementById('game-day'),
+        message: document.getElementById('game-message'),
+        resetButton: document.getElementById('reset-button'),
+        endDayButton: document.getElementById('end-day-button'),
+        goToShopButton: document.getElementById('go-to-shop-button'), 
+        purchaseUpgradeButton: document.getElementById('purchase-upgrade-button'), 
+        backToDinerButton: document.getElementById('back-to-diner-button'), 
+        shopMessage: document.getElementById('shop-message'),
+        kitchen: document.getElementById('KITCHEN'),
+        counter: document.getElementById('COUNTER'),
+        queue: document.getElementById('QUEUE'),
+        trash: document.getElementById('TRASH'), // NEW
+        foodReadyCount: document.getElementById('food-ready-count'),
+        queueCount: document.getElementById('queue-count'),
+        upgradePanel: document.getElementById('upgrade-panel'), 
+        shopCurrentUpgrades: document.getElementById('shop-current-upgrades'), 
+        T5: document.getElementById('T5'), 
+        T6: document.getElementById('T6'),
+        // NEW TRASH UI ELEMENTS
+        trashFill: document.getElementById('trash-fill'),
+        trashLevelText: document.getElementById('trash-level-text'),
+        fridge: document.getElementById('FRIDGE'),
+        jukebox: document.getElementById('JUKEBOX'),
+    };
+
+    let gameLoopInterval = null;
+
+    // --- Dynamic Layout Definitions ---
+
+/**
+ * Calculates the necessary CSS and adjacency data based on the current table capacity.
+ */
+/**
+ * Calculates the necessary CSS and adjacency data based on the current table capacity.
+ */
+/**
+ * Calculates the necessary CSS and adjacency data based on the current table capacity.
+ */
+function getLayoutData(tableCapacity) {
+    // Example positions for up to 11 tables (T1-T11) -- adjust these if needed for your UI/map
+    const tablePositions = [
+        {},  // index 0 unused
+        { left: '68.34%', top: '43.0%' }, // T1
+        { left: '76.34%', top: '43.0%' }, // T2
+        { left: '84.34%', top: '43.0%' }, // T3
+        { left: '78.34%', top: '64.0%' }, // T4
+        { left: '78.34%', top: '64.0%' }, // T5
+        { left: '56.00%', top: '64.00%' }, // T6
+        { left: '56.00%', top: '64.00%' },  // T7
+        { left: '32.36%', top: '64.00%' },  // T8
+        { left: '32.36%', top: '64.00%' },  // T9
+        { left: '10.22%', top: '64.00%' },  // T10
+        { left: '10.22%', top: '64.00%' },  // T11
+    ];
+
+    // Helper to build stationPositions for any n tables (plus other stations)
+    function buildStationPositions(n) {
+        const pos = {
+            'KITCHEN': { left: '70.97%', top: '24.88%' },
+            'FRIDGE': { left: '55.90%', top: '35.28%' },
+            'COUNTER': { left: '75.63%', top: '24.88%' },
+            'QUEUE': { left: '20.03125%', top: '90.13%' },
+            'TRASH': { left: '80.50%', top: '80.63%' },
+            'JUKEBOX': { left: '37.5%', top: '35.28%' }
+        };
+        for (let i = 1; i <= n; i++) {
+            pos['T' + i] = tablePositions[i];
+        }
+        return pos;
+    }
+
+    // Helper to build tableGridAreas for any n tables
+    function buildTableGridAreas(n) {
+        const areas = {};
+        for (let i = 1; i <= n; i++) {
+            areas['T' + i] = `2 / ${i} / 3 / ${i + 1}`;
+        }
+        return areas;
+    }
+
+    // Helper: Build adjacency map for any n tables (simple logic: all tables connect to kitchen, counter, fridge, and nearest neighbors)
+function buildAdjacencyMap(n) {
+    const map = {};
+    // List of table IDs
+    const tables = [];
+    for (let i = 1; i <= n; i++) tables.push('T' + i);
+
+    // All tables: connected to each other, counter, jukebox, fridge, queue, trash
+    for (let i = 1; i <= n; i++) {
+        const tid = 'T' + i;
+        map[tid] = [
+            ...tables.filter(t => t !== tid), // all other tables
+            'COUNTER',
+            'JUKEBOX',
+            'FRIDGE',
+            'QUEUE',
+            'TRASH'
+        ];
+    }
+
+    // Counter: connected to kitchen, fridge, all tables
+    map['COUNTER'] = ['KITCHEN', 'FRIDGE', ...tables];
+
+    // Fridge: connected to jukebox, all tables, counter
+    map['FRIDGE'] = ['JUKEBOX', ...tables, 'COUNTER'];
+
+    // Trash: connected to all tables, queue
+    map['TRASH'] = [...tables, 'QUEUE'];
+
+    // Queue: connected to all tables, trash
+    map['QUEUE'] = [...tables, 'TRASH'];
+
+    // Jukebox: no explicit outgoing connections unless needed (can be left out or e.g. ['QUEUE'])
+    map['JUKEBOX'] = [];
+
+    // Kitchen: connected to counter only
+    map['KITCHEN'] = ['COUNTER'];
+
+    return map;
+}
+
+    // Grid columns and maxWidth scale with n tables
+    if (tableCapacity >= 7 && tableCapacity <= 11) {
+        return {
+            gridColumns: `repeat(${tableCapacity}, 1fr)`,
+            maxWidth: `${700 + 100 * (tableCapacity - 4)}px`,
+            kitchenGrid: `1 / 1 / 2 / ${tableCapacity + 1}`,
+            queueGrid: `3 / 1 / 4 / 2`,
+            trashGrid: `3 / 2 / 4 / 4`,
+            counterGrid: `3 / ${tableCapacity} / 4 / ${tableCapacity + 1}`,
+            stationPositions: buildStationPositions(tableCapacity),
+            tableGridAreas: buildTableGridAreas(tableCapacity),
+            adjMap: buildAdjacencyMap(tableCapacity)
+        };
+    }
+
+    // --- 4 tables (original) ---
+    if (tableCapacity === 4) {
+        return {
+            gridColumns: 'repeat(4, 1fr)',
+            maxWidth: '800px',
+            kitchenGrid: '1 / 1 / 2 / 5',
+            queueGrid: '3 / 1 / 4 / 2',
+            trashGrid: '3 / 2 / 4 / 4',
+            counterGrid: '3 / 4 / 4 / 5',
+            stationPositions: {
+                'KITCHEN': { left: '70.97%', top: '24.88%' },
+                'FRIDGE': { left: '55.90%', top: '35.28%' },
+                'COUNTER': { left: '75.63%', top: '24.88%' },
+                'T1': { left: '68.34%', top: '43.0%' },
+                'T2': { left: '76.34%', top: '43.0%' },
+                'T3': { left: '84.34%', top: '43.0%' },
+                'T4': { left: '78.34%', top: '63.0%' },
+                'QUEUE': { left: '20.03125%', top: '90.13%' },
+                'TRASH': { left: '80.50%', top: '80.63%' },
+                'JUKEBOX': { left: '37.5%', top: '35.28%' }
+            },
+            tableGridAreas: {
+                'T1': '2 / 1 / 3 / 2',
+                'T2': '2 / 2 / 3 / 3',
+                'T3': '2 / 3 / 3 / 4',
+                'T4': '2 / 4 / 3 / 5',
+            },
+            adjMap: buildAdjacencyMap(tableCapacity)
+        };
+    }
+    // --- 5 tables ---
+    else if (tableCapacity === 5) {
+        return {
+            gridColumns: 'repeat(5, 1fr)',
+            maxWidth: '900px',
+            kitchenGrid: '1 / 1 / 2 / 6',
+            queueGrid: '3 / 1 / 4 / 2',
+            trashGrid: '3 / 2 / 4 / 4',
+            counterGrid: '3 / 5 / 4 / 6',
+            stationPositions: {
+                'KITCHEN': { left: '70.97%', top: '24.88%' },
+                'FRIDGE': { left: '55.90%', top: '35.28%' },
+                'COUNTER': { left: '75.63%', top: '24.88%' },
+                'T1': { left: '68.34%', top: '43.0%' },
+                'T2': { left: '76.34%', top: '43.0%' },
+                'T3': { left: '84.34%', top: '43.0%' },
+                'T4': { left: '78.34%', top: '64.0%' },
+                'T5': { left: '78.34%', top: '64.0%' },
+                'QUEUE': { left: '20.03125%', top: '90.13%' },
+                'TRASH': { left: '80.50%', top: '80.63%' },
+                'JUKEBOX': { left: '37.5%', top: '35.28%' }
+            },
+            tableGridAreas: {
+                'T1': '2 / 1 / 3 / 2',
+                'T2': '2 / 2 / 3 / 3',
+                'T3': '2 / 3 / 3 / 4',
+                'T4': '2 / 4 / 3 / 5',
+                'T5': '2 / 5 / 3 / 6'
+            },
+            adjMap: {
+                'KITCHEN': ['T1', 'T2', 'T3', 'T4', 'T5', 'COUNTER', 'FRIDGE'],
+                'T1': ['KITCHEN', 'T2', 'COUNTER', 'FRIDGE'],
+                'T2': ['KITCHEN', 'T1', 'T3', 'COUNTER', 'FRIDGE'],
+                'T3': ['KITCHEN', 'T2', 'T4', 'COUNTER', 'FRIDGE'],
+                'T4': ['KITCHEN', 'T3', 'T5', 'COUNTER', 'FRIDGE', 'QUEUE', 'TRASH'],
+                'T5': ['KITCHEN', 'T4', 'COUNTER', 'FRIDGE'],
+                'QUEUE': ['T4', 'TRASH', 'JUKEBOX'],
+                'TRASH': ['T4', 'QUEUE', 'COUNTER', 'FRIDGE'],
+                'FRIDGE': ['KITCHEN', 'T1', 'T2', 'T3', 'T4', 'T5', 'COUNTER', 'TRASH'],
+                'COUNTER': ['KITCHEN', 'T1', 'T2', 'T3', 'T4', 'T5', 'FRIDGE', 'TRASH'],
+                'JUKEBOX': ['QUEUE'],
+            }
+        };
+    }
+    // --- 6 tables ---
+    else if (tableCapacity === 6) {
+        return {
+            gridColumns: 'repeat(6, 1fr)',
+            maxWidth: '1000px',
+            kitchenGrid: '1 / 1 / 2 / 7',
+            queueGrid: '3 / 1 / 4 / 2',
+            trashGrid: '3 / 2 / 4 / 4',
+            counterGrid: '3 / 6 / 4 / 7',
+            stationPositions: {
+                'KITCHEN': { left: '70.97%', top: '24.88%' },
+                'FRIDGE': { left: '55.90%', top: '35.28%' },
+                'COUNTER': { left: '75.63%', top: '24.88%' },
+                'T1': { left: '68.34%', top: '43.0%' },
+                'T2': { left: '76.34%', top: '43.0%' },
+                'T3': { left: '84.34%', top: '43.0%' },
+                'T4': { left: '78.34%', top: '64.0%' },
+                'T5': { left: '78.34%', top: '64.0%' },
+                'T6': { left: '56.00%', top: '64.00%' },
+                'QUEUE': { left: '20.03125%', top: '90.13%' },
+                'TRASH': { left: '80.50%', top: '80.63%' },
+                'JUKEBOX': { left: '37.5%', top: '35.28%' }
+            },
+            tableGridAreas: {
+                'T1': '2 / 1 / 3 / 2',
+                'T2': '2 / 2 / 3 / 3',
+                'T3': '2 / 3 / 3 / 4',
+                'T4': '2 / 4 / 3 / 5',
+                'T5': '2 / 5 / 3 / 6',
+                'T6': '2 / 6 / 3 / 7'
+            },
+            adjMap: {
+                'KITCHEN': ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'COUNTER', 'FRIDGE'],
+                'T1': ['KITCHEN', 'T2', 'COUNTER', 'FRIDGE'],
+                'T2': ['KITCHEN', 'T1', 'T3', 'COUNTER', 'FRIDGE'],
+                'T3': ['KITCHEN', 'T2', 'T4', 'COUNTER', 'FRIDGE'],
+                'T4': ['KITCHEN', 'T3', 'T5', 'COUNTER', 'FRIDGE', 'QUEUE', 'TRASH'],
+                'T5': ['KITCHEN', 'T4', 'T6', 'COUNTER', 'FRIDGE'],
+                'T6': ['KITCHEN', 'T5', 'COUNTER', 'FRIDGE'],
+                'QUEUE': ['T4', 'TRASH', 'JUKEBOX'],
+                'TRASH': ['T4', 'QUEUE', 'COUNTER', 'FRIDGE'],
+                'FRIDGE': ['KITCHEN', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'COUNTER', 'TRASH'],
+                'COUNTER': ['KITCHEN', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'FRIDGE', 'TRASH'],
+                'JUKEBOX': ['QUEUE'],
+            }
+        };
+    }
+
+    // --- 7-11 tables (dynamic) ---
+    else if (tableCapacity >= 7 && tableCapacity <= 11) {
+        return {
+            gridColumns: `repeat(${tableCapacity}, 1fr)`,
+            maxWidth: `${700 + 100 * (tableCapacity - 4)}px`,
+            kitchenGrid: `1 / 1 / 2 / ${tableCapacity + 1}`,
+            queueGrid: `3 / 1 / 4 / 2`,
+            trashGrid: `3 / 2 / 4 / 4`,
+            counterGrid: `3 / ${tableCapacity} / 4 / ${tableCapacity + 1}`,
+            stationPositions: buildStationPositions(tableCapacity),
+            tableGridAreas: buildTableGridAreas(tableCapacity),
+            adjMap: buildAdjacencyMap(tableCapacity)
+        };
+    }
+}
+    
+    // Global variables updated by updateLayout
+    let currentStationPositions = {};
+    let currentAdjacencyMap = {};
+
+
+        // --- NEW HELPER FUNCTION ---
+    // Calculates the offset needed to center the player circle over the station button.
+    function applyCenterOffset(positions) {
+        // 6.25% is (40px / 640px) * 100. This centers the 2.5rem (40px) player element 
+        // over the station's area, which is assumed to be defined by its top-left corner.
+        const offsetPercent = 6.25; 
+        const newPositions = {};
+        for (const key in positions) {
+            // Parse the percentage values
+            const leftValue = parseFloat(positions[key].left);
+            const topValue = parseFloat(positions[key].top);
+            
+            // Add the offset percentage to center the player on the station
+            newPositions[key] = {
+                left: (leftValue + offsetPercent).toFixed(2) + '%',
+                top: (topValue + offsetPercent).toFixed(2) + '%'
+            };
+        }
+        return newPositions;
+    }
+    /**
+     * Dynamically updates the game board CSS and station positions/visibility.
+     */
+    function updateLayout(tableCapacity) {
+        const data = getLayoutData(tableCapacity);
+
+        // 1. Update Global Layout Data
+        // FIX: Apply the offset here to ensure the player's center aligns with the center of the station.
+        currentStationPositions = applyCenterOffset(data.stationPositions);
+        currentAdjacencyMap = data.adjMap;
+
+        // 2. Update Grid CSS
+        elements.board.style.gridTemplateColumns = data.gridColumns;
+        elements.board.style.maxWidth = data.maxWidth;
+
+        // 3. Update Main Station Grid Areas (KITCHEN, QUEUE, COUNTER, TRASH)
+        elements.kitchen.style.gridArea = data.kitchenGrid;
+        elements.queue.style.gridArea = data.queueGrid;
+        elements.counter.style.gridArea = data.counterGrid;
+        elements.trash.style.gridArea = data.trashGrid; // NEW
+
+
+            // 4. Update Tables (Grid Area and Visibility)
+    for (let i = 1; i <= 11; i++) {
+        const tableId = `T${i}`;
+        const imageTableId = `T${i}-image`;
+        const stationElement = document.getElementById(tableId);
+        const imageTableElement = document.getElementById(imageTableId);
+        if (!stationElement) continue;
+
+        if (i <= tableCapacity) {
+            // Show table and set grid area
+            stationElement.classList.remove('hidden');
+            if (imageTableElement) imageTableElement.classList.remove('hidden'); // Show image
+
+
+            stationElement.style.gridArea = data.tableGridAreas[tableId];
+
+            // *** MODIFICATION START ***
+            if (tableId === 'T5' || tableId === 'T6') {
+                 // Apply the new visual style for upgraded tables
+                 stationElement.classList.add('upgraded-table');
+            } else {
+                 // Ensure lower tables (T1-T4) don't accidentally have the class
+                 stationElement.classList.remove('upgraded-table'); 
+            }
+            // *** MODIFICATION END ***
+
+            // Ensure table is in gameState.tables if it's active
+            if (!gameState.tables[tableId]) {
+                gameState.tables[tableId] = { occupied: false, customer: null };
+            }
+        } else {
+            // Hide table
+            stationElement.classList.add('hidden');
+            delete gameState.tables[tableId]; 
+        }
+    }
+        
+        // 5. Update Player position based on new positions
+        if (!gameState.playerIsMoving) {
+            const pos = currentStationPositions[gameState.playerLocation];
+            elements.player.style.left = pos.left;
+            elements.player.style.top = pos.top;
+        }
+        // Always re-render after layout changes to keep UI in sync
+        renderGame();
+    }
+
+    // --- Player Movement & Pathfinding (BFS) ---
+
+    /**
+     * Finds the shortest path between two stations using Breadth-First Search (BFS).
+     * Uses the current dynamic adjacency map.
+     */
+function findPath(startId, endId) {
+    if (startId === endId) return [startId];
+    const queue = [startId];
+    const visited = {[startId]: true};
+    const parent = {};
+    while (queue.length > 0) {
+        const current = queue.shift();
+        if (current === endId) {
+            // reconstruct path
+            const path = [];
+            let node = endId;
+            while (node !== startId) {
+                path.unshift(node);
+                node = parent[node];
+            }
+            path.unshift(startId);
+            return path;
+        }
+        const neighbors = currentAdjacencyMap[current] || [];
+        for (const neighbor of neighbors) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                parent[neighbor] = current;
+                queue.push(neighbor);
+            }
+        }
+    }
+    // No path found, just return start
+    return [startId];
+}
+
+    /**
+     * Moves the player along the calculated path.
+     */
+// --- Move player along path with animation ---
+function movePlayer(path, onComplete) {
+    if (!Array.isArray(path) || path.length === 0) {
+        if (onComplete) onComplete();
+        return;
+    }
+    gameState.playerIsMoving = true;
+    let i = 1;
+    function step() {
+        const sprite = document.getElementById('player')
+        if (i >= path.length) {
+            gameState.playerIsMoving = false;
+            if (onComplete) onComplete();
+            return;
+        }
+        gameState.playerLocation = path[i];
+        const pos = currentStationPositions[gameState.playerLocation];
+        elements.player.style.left = pos.left;
+        elements.player.style.top = pos.top;
+        i++;
+        setTimeout(step, CONFIG.MOVEMENT_DURATION_MS);
+        const helpmecalculate = parseFloat(elements.player.style.left) //dont forget
+        if (helpmecalculate > 50) { 
+            if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood < 2) {
+                if (gameState.selectedCharacter === 'Yan') {sprite.style.backgroundImage = `url(1_left_walk2.png)`} 
+                    else {sprite.style.backgroundImage = `url(1_left_walk2(1).png)`}
+        } else if (gameState.playerCarryingFood > 2) { 
+            if (gameState.selectedCharacter === 'Yan') {sprite.style.backgroundImage = `url(2_left_walk2.png)`} 
+            else {sprite.style.backgroundImage = `url(2_left_walk2(2).png)`}} else
+        sprite.style.backgroundImage = `url(0_right_walk2.png)`} else {
+            sprite.style.backgroundImage = `url(0_left_walk2.png)`}
+        }
+    step(); 
+}
+    // --- Customer Management (Logic Unchanged) ---
+
+    function createCustomer() {
+        const id = gameState.nextCustomerId++;
+        const basePatience = CONFIG.BASE_PATIENCE_START + gameState.upgrades.patienceLevel +  (gameState.upgrades.drinkSystemUnlocked ? gameState.upgrades.drinkPatienceBonus : 0);
+
+
+        return {
+            id,
+            state: 'ARRIVED', 
+            patience: basePatience,
+            hasDrinkBuff: false,
+            tableId: null,
+            order: 'BURGER_FRIES',
+            emoji: '😎', 
+        };
+    }
+
+    function spawnCustomer() {
+        const newCustomer = createCustomer();
+        gameState.customers.push(newCustomer);
+        logMessage(`Customer #${newCustomer.id} arrived! Time to seat them.`);
+        renderGame();
+    }
+
+    function renderCustomer(tableId) {
+        const table = gameState.tables[tableId];
+        // Check if the table element actually exists (it might be T5/T6 and hidden)
+        const container = document.getElementById(tableId);
+        if (!container || container.classList.contains('hidden')) return;
+
+        const label = container.querySelector('.table-label'); 
+        
+        let customerDisplay = container.querySelector('.customer-display');
+        if (customerDisplay) {
+            container.removeChild(customerDisplay);
+        }
+
+        if (table && table.customer) {
+            if (label) label.classList.add('hidden'); 
+            
+            const c = table.customer;
+            
+            customerDisplay = document.createElement('div');
+            customerDisplay.className = 'customer-display absolute inset-0 flex flex-col justify-center items-center p-1 bg-gray-200/50 rounded-md';
+            
+            let statusText = '';
+            let patienceColor = '';
+
+            if (c.patience > 60) {
+                patienceColor = 'bg-green-500';
+            } else if (c.patience > 30) {
+                patienceColor = 'bg-yellow-500';
+            } else {
+                patienceColor = 'bg-red-500';
+            }
+
+        switch (c.state) {
+            case 'SEATED_WAITING_ORDER': statusText = '📝'; break;
+            case 'ORDER_PLACED': statusText = '📝'; break;
+            case 'WAITING_FOOD': statusText = '⏰'; break;
+            case 'EATING': statusText = '🍽️'; break;
+            case 'WAITING_TIP':
+            case 'TIP_READY_FOR_COLLECTION': statusText = ''; break;
+            default: statusText = '';
+        }
+            
+        customerDisplay.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-1">
+            <div class="flex items-center justify-center gap-1">
+            <div class="customer-icon text-2xl">${c.emoji}</div>
+            <div class="status-detail text-xl">${statusText}</div>
+            </div>
+            <div class="patience-bar w-16 h-2 rounded bg-gray-200 overflow-hidden mt-1">
+            <div class="patience-fill ${patienceColor}" style="width: ${c.patience > 0 ? c.patience : 0}%;"></div>
+            </div>
+        </div>
+        `;
+
+            container.appendChild(customerDisplay);
+        } else {
+            if (label) label.classList.remove('hidden'); 
+        }
+    }
+
+    // --- Action Handlers ---
+
+    function handlePurchaseUpgrade() {
+            // 1. Check if the game is running (and stop it temporarily)
+    const wasRunning = gameState.isGameRunning;
+    if (wasRunning) {
+        gameState.isGameRunning = false;
+        clearInterval(gameLoopInterval);
+        gameLoopInterval = null;
+    }
+        // Check if the current score can afford the current cost
+        if (gameState.score < gameState.upgradeCost) {
+            elements.shopMessage.classList.remove('hidden');
+            return;
+        }
+        
+        elements.shopMessage.classList.add('hidden');
+        gameState.score -= gameState.upgradeCost;
+        
+        // Filter upgrades based on current max capacity/level (Expansion, Tray, Cook, Trash)
+        const pool = UPGRADES.filter(u => {
+            if (u.name === 'Restaurant Expansion' && gameState.upgrades.tableCapacity >= 11) return false;
+            if (u.name === 'Double Tray' && gameState.upgrades.trayCapacity >= CONFIG.MAX_TRAY_CAPACITY) return false;
+            if (u.name === 'Speedy Prep Station' && gameState.upgrades.baseCookTimeReduction * 1000 >= CONFIG.MAX_FOOD_PREP_TIME_REDUCTION) return false;
+            if (u.name === 'Janitor\'s Kit' && gameState.upgrades.trashSpawnMultiplier <= 0.5) return false;
+            return true;
+        });
+
+    updateLayout(gameState.upgrades.tableCapacity);
+    renderGame();
+
+        // If all core upgrades are maxed, allow a random one to roll for fallback bonuses
+        const upgradePool = pool.length > 0 ? pool : UPGRADES;
+        const selectedUpgrade = upgradePool[Math.floor(Math.random() * upgradePool.length)];
+        
+        const statusMessage = selectedUpgrade.apply(gameState);
+        
+        gameState.upgradesPurchased++;
+    // Calculate new cost: Base Cost * (1 + (Upgrades Purchased * Increase Percentage))
+    // We use Math.ceil to round up to the nearest dollar.
+        const newCost = CONFIG.SHOP_BASE_COST * (1 + (gameState.upgradesPurchased * CONFIG.SHOP_COST_INCREASE_PERCENT));
+        gameState.upgradeCost = Math.ceil(newCost / 5) * 5; // Round to the nearest $5 for cleaner numbers
+
+        logMessage(`🎉 UPGRADE PURCHASED: ${selectedUpgrade.name}! ${statusMessage}`, 'text-purple-400');
+        
+        renderGame();
+        renderUpgrades();
+        updateShopControls();
+    }
+    
+// --- Action Handlers ---
+function handleAction(targetId) {
+if (!gameState.isGameRunning) {
+        logMessage('Start the day first!', 'text-red-400');
+        return;
+    }
+    if (gameState.playerIsMoving) {
+        logMessage('Please wait for Flo to finish her current action!');
+        return;
+    }
+    const start = gameState.playerLocation;
+    const end = targetId;
+    const path = findPath(start, end);
+    movePlayer(path, () => {
+        gameState.playerLocation = end;
+        const targetType = document.getElementById(targetId).dataset.type;
+        executeAction(targetId, targetType);
+    });
+}
+
+    function executeAction(stationId, stationType) {
+        
+        // --- QUEUE Actions ---
+        if (stationType === 'queue') {
+            const sprite = document.getElementById('player')
+            const customerInQueue = gameState.customers.find(c => c.state === 'ARRIVED');
+            sprite.style.backgroundImage = `url(0_left_idle1.png)`
+            if (customerInQueue) {
+                // Find empty table in the CURRENTLY ACTIVE tables
+                const emptyTableId = Object.keys(gameState.tables).find(id => !gameState.tables[id].occupied);
+                if (emptyTableId) {
+                    customerInQueue.state = 'SEATED_WAITING_ORDER';
+                    customerInQueue.tableId = emptyTableId;
+                    gameState.tables[emptyTableId].occupied = true;
+                    gameState.tables[emptyTableId].customer = customerInQueue;
+                    
+                    gameState.customers = gameState.customers.filter(c => c.id !== customerInQueue.id); 
+
+                    logMessage(`Customer #${customerInQueue.id} seated at ${emptyTableId}. Take their order!`);
+                    flashMessage(emptyTableId, 'Seat!');
+                } else {
+                    logMessage('No empty tables available. Please wait!');
+                }
+            } else {
+                logMessage('The queue is empty.');
+            }
+        } 
+        
+        // --- TABLE Actions (Order, Serve, Clear) ---
+        else if (stationType === 'table') {
+            const sprite = document.getElementById('player')
+            // Check if the table is currently active 
+            if (!gameState.tables[stationId]) return;
+            
+            const table = gameState.tables[stationId];
+            if (stationId === 'T1' || stationId === 'T2' || stationId === 'T3' || stationId === 'T4' || stationId === 'T6' || stationId === 'T8' || stationId === 'T10') {
+                sprite.style.backgroundImage = `url(0_back_idle2.png)`
+            } else if (stationId === 'T5' || stationId === 'T7' || stationId === 'T9' || staitonId === 'T11') {
+                            if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood < 2) {
+                sprite.style.backgroundImage = `url(1_front_idle1.png)`
+            } else if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood > 1) {
+                sprite.style.backgroundImage = `url(2_front_idle1.png)`
+            } else {
+                    sprite.style.backgroundImage = `url(0_front_stand1.png)`
+                }
+            }
+        
+            if (!table.occupied) {
+                logMessage('This table is empty.');
+                return;
+            }
+
+            const c = table.customer;
+            
+            if (c.state === 'SEATED_WAITING_ORDER') {
+                c.state = 'ORDER_PLACED';
+                logMessage(`Flo took the order for ${stationId}. Now, deliver it to the kitchen!`);
+                flashMessage(stationId, 'Order Taken!');
+            } 
+            
+            else if (c.state === 'WAITING_FOOD') { 
+                if (gameState.playerCarryingDrinks > 0) {
+                    if (c.hasDrinkBuff == true) {
+                        logMessage(`Already gave drink!`)
+                    } else {
+                    gameState.playerCarryingDrinks--;
+                    logMessage(`Flo served drink to ${stationId}. Wait for the food!`);
+                    flashMessage(stationId, 'Gave Drink!')
+                    c.patience = c.patience + 30;
+                    c.hasDrinkBuff = true;}
+                }
+                else {
+                    logMessage('Flo needs to pick up drinks from the fridge first!');
+                }
+                if (gameState.playerCarryingFood > 0) {
+                    c.state = 'EATING';
+                    gameState.playerCarryingFood--; 
+
+                    if (gameState.playerCarryingFood === 0) {
+                        elements.player.classList.remove('bg-yellow-600');
+                    }
+                    
+                    logMessage(`Flo served food to ${stationId}. Enjoy the meal!`);
+                    flashMessage(stationId, 'Served!');
+                } else {
+                    logMessage('Flo needs to pick up the food from the kitchen first!');
+                }
+
+            } else if (c.state === 'WAITING_TIP') {
+                c.state = 'TIP_READY_FOR_COLLECTION'; 
+                flashMessage('COUNTER', '💵 Tip Ready!');
+                logMessage(`💵 Tip is ready at the counter from ${stationId}!`);
+
+            } else if (c.state === 'EATING') {
+                    if (gameState.playerCarryingDrinks > 0) {
+                    if (c.hasDrinkBuff == true) {
+                        logMessage(`Already gave drink!`)
+                    } else {
+                    gameState.playerCarryingDrinks--;
+                    logMessage(`Flo served drink to ${stationId}. Wait for the food!`);
+                    flashMessage(stationId, 'Gave Drink!')
+                    c.patience = c.patience + 30;
+                    c.hasDrinkBuff = true;}}
+                logMessage('The customer is still eating. Be patient.');
+            }
+              else if (c.state === 'EATING' && !c.hasDrink && gameState.playerCarryingFood > 0 && gameState.upgrades.drinkSystemUnlocked) {
+                c.hasDrink = true;
+                
+                gameState.playerCarryingFood--;
+                logMessage(`Served a drink to ${stationId}! They’ll tip 50% more! 🍹`);
+                flashMessage(stationId, '+Drink Buff!');
+            }
+        }
+        
+                // --- FRIDGE Actions (Drink Pickup) ---
+        // This should be inserted before your 'else if (stationType === 'kitchen')' block.
+        else if (stationId === 'FRIDGE') {
+            const sprite = document.getElementById('player')
+            sprite.style.backgroundImage = `url(0_back_idle2.png)`
+            // Calculate current items (Food + Drinks)
+            const currentItems = gameState.playerCarryingFood + gameState.playerCarryingDrinks;
+            
+            // Check if Flo has capacity for at least 1 more item
+            if (currentItems < gameState.upgrades.trayCapacity) {
+                
+                // Pick up the drink, using 1 capacity slot
+                gameState.playerCarryingDrinks++;
+                
+                logMessage(`🥤 Flo picked up a drink. Drinks carried: ${gameState.playerCarryingDrinks}.`);
+                flashMessage(targetId, `Drink Picked Up!`);
+
+                // This call updates Flo's color/count using the centralized renderGame logic
+                renderGame(); 
+            }
+            else {
+                // Tray is full message, similar to the kitchen's full tray check
+                logMessage(`Flo's tray is full (${currentItems} items)! Cannot pick up drink.`);
+            }
+        } 
+
+        // --- KITCHEN Actions ---
+        else if (stationType === 'kitchen') {
+            const sprite = document.getElementById('player')
+            sprite.style.backgroundImage = `url(0_back_idle2.png)`
+            // 1. Deliver ALL ORDER_PLACED to Kitchen (only from active tables)
+            const tablesWithOrders = Object.values(gameState.tables).filter(t => t.customer && t.customer.state === 'ORDER_PLACED');
+            
+            if (tablesWithOrders.length > 0) {
+                tablesWithOrders.forEach(table => {
+                    const c = table.customer;
+                    c.state = 'WAITING_FOOD'; 
+                    
+                    // Calculate cooking time using the fixed reduction
+                    const cookReductionMS = gameState.upgrades.baseCookTimeReduction * 1000;
+                    const cookingTime = Math.max(
+                        CONFIG.BASE_FOOD_PREP_TIME - cookReductionMS, 
+                        CONFIG.BASE_FOOD_PREP_TIME - CONFIG.MAX_FOOD_PREP_TIME_REDUCTION
+                    );
+
+                    setTimeout(() => {
+                        gameState.foodReadyCount++;
+                        logMessage(`[CHEF] Food for ${c.tableId} is ready!`);
+                        renderGame();
+                    }, cookingTime); 
+                    
+                    logMessage(`Order for ${c.tableId} delivered to the kitchen (Cook time: ${(cookingTime/1000).toFixed(1)}s).`);
+                });
+                
+                flashMessage(stationId, `${tablesWithOrders.length} Order(s) Sent!`);
+            } 
+            
+            // 2. Pick up ready food 
+            else if (gameState.foodReadyCount > 0 && gameState.playerCarryingFood < gameState.upgrades.trayCapacity) {
+                
+                const capacityRemaining = gameState.upgrades.trayCapacity - gameState.playerCarryingFood;
+                const pickUpAmount = Math.min(gameState.foodReadyCount, capacityRemaining);
+
+                gameState.playerCarryingFood += pickUpAmount;
+                gameState.foodReadyCount -= pickUpAmount;
+                
+                elements.player.classList.add('bg-yellow-600');
+                logMessage(`Flo picked up ${pickUpAmount} food order(s). Carry total: ${gameState.playerCarryingFood}.`);
+                flashMessage(stationId, `Picked Up x${pickUpAmount}!`);
+            }
+            else if (gameState.playerCarryingFood + gameState.playerCarryingDrinks === gameState.upgrades.trayCapacity) {
+                 logMessage(`Flo's tray is full (${gameState.playerCarryingFood} items)!`);
+            }
+            else {
+                logMessage('No new orders to place, and no food is ready.');
+            }
+        }
+        
+
+        // --- COUNTER Actions ---
+        else if (stationId === 'COUNTER') {
+            const sprite = document.getElementById('player')
+            if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood < 2) {
+                sprite.style.backgroundImage = `url(1_front_idle1.png)`
+            } else if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood > 1) {
+                sprite.style.backgroundImage = `url(2_front_idle1.png)`
+            } else {
+                    sprite.style.backgroundImage = `url(0_front_idle1.png)`
+                }
+            
+            
+            // Collect TIP
+            const tableReadyForTip = Object.values(gameState.tables).find(t => t.customer && t.customer.state === 'TIP_READY_FOR_COLLECTION');
+            
+            if (tableReadyForTip) {
+                const c = tableReadyForTip.customer;
+                
+                const finalPatience = c.patience;
+                const baseTipBonus = finalPatience * CONFIG.PATIENCE_BONUS_MULTIPLIER;
+                let tipAmount = Math.round(CONFIG.BASE_TIP + baseTipBonus);
+                
+                tipAmount = Math.round(tipAmount * gameState.upgrades.tipMultiplier);
+                if (c.hasDrinkBuff === true) {tipAmount = Math.round(tipAmount * 1.5);}
+                gameState.score += tipAmount;
+                logMessage(`Tip collected from ${c.tableId}! Scored $${tipAmount}.`);
+                flashMessage(stationId, `$${tipAmount} Tip!`);
+                
+                tableReadyForTip.occupied = false;
+                tableReadyForTip.customer = null;
+                
+            } else {
+                logMessage('No tips to collect at the counter.');
+            }
+        }
+
+        // --- TRASH Actions (NEW) ---
+        else if (stationType === 'trash') {
+            const sprite = document.getElementById('player')
+                        if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood < 2) {
+                sprite.style.backgroundImage = `url(1_front_idle1.png)`
+            } else if (gameState.playerCarryingFood > 0 && gameState.playerCarryingFood > 1) {
+                sprite.style.backgroundImage = `url(2_front_idle1.png)`
+            } else {
+                    sprite.style.backgroundImage = `url(0_front_idle1.png)`
+                }
+            if (gameState.trashLevel > 0) {
+                // Reduce trash level by a set amount
+                const trashBefore = gameState.trashLevel;
+                gameState.trashLevel = Math.max(0, gameState.trashLevel - gameState.trashDecayRate);
+                
+                const cleanedAmount = trashBefore - gameState.trashLevel;
+
+                logMessage(`Flo is cleaning! Diner cleanliness improved by ${cleanedAmount}%.`);
+                flashMessage(stationId, `Cleaning... -${cleanedAmount}% Trash!`);
+            } else {
+                logMessage('The diner is spotless!');
+            }
+        }
+ else if (stationType === 'jukebox') {
+            const sprite = document.getElementById('player')
+            sprite.style.backgroundImage = `url(0_back_idle2.png)`
+        gameState.jukeboxMusicOn = !gameState.jukeboxMusicOn;
+        const audio = document.getElementById('jukebox-audio');
+        if (audio) {
+            if (gameState.jukeboxMusicOn) {
+                audio.currentTime = 0; // optional: restart from beginning
+                audio.play();
+                logMessage('🎵 The jukebox starts playing lively music! Customers feel happier.', 'text-purple-400');
+            } else {
+                audio.pause();
+                logMessage('🛑 The jukebox music stops. The diner is quieter now.', 'text-gray-400');
+            }
+        }
+        renderGame();
+        return;
+    }
+    renderGame();
+}   
+// --- Fix: Handle undefined table.id in eating timer ---
+function safeTableId(tableId) {
+    // Helper for logging
+    return tableId || 'Unknown';
+}
+    // Ability timer logic (run in game loop)
+function tickAbilityTimers() {
+    if (gameState.ability.active) {
+        gameState.ability.duration--;
+        if (gameState.ability.duration <= 0) {
+            // End effect, start cooldown
+            gameState.ability.active = false;
+            gameState.ability.cooldown = ABILITY_CONFIG[gameState.ability.type.toLowerCase()].cooldown;
+            gameState.ability.state = "cooldown";
+            // Reset stats
+            if (gameState.ability.type === "Yan") {
+                CONFIG.MOVEMENT_DURATION_MS = gameState._originalMoveTime;
+                CONFIG.BASE_FOOD_PREP_TIME = gameState._originalPrepTime;
+            } else if (gameState.ability.type === "Pela") {
+                CONFIG.PATIENCE_DECAY_RATE = gameState._originalPatienceDecay;
+            }
+            logMessage(`${gameState.ability.type} ability ended! Cooldown started.`, "text-gray-300");
+            updateAbilityButton();
+        }
+    } else if (gameState.ability.cooldown > 0) {
+        gameState.ability.cooldown--;
+        if (gameState.ability.cooldown === 0) {
+            gameState.ability.state = "ready";
+            logMessage(`Ability is ready to use!`, "text-green-400");
+        }
+        updateAbilityButton();
+    }
+}
+function switchCharacter() {
+    // Switch between Yan and Pela (optional UI, not required per your prompt).
+    gameState.selectedCharacter = (gameState.selectedCharacter === "Yan" ? "Pela" : "Yan");
+    updateAbilityButton();
+    renderGame();
+}
+    // --- Game Loop and Time Management ---
+    function getCurrentCustomerSpawnRange() {
+    // Base: min 5, max 20 (you had 5-20 for first, then 5-15 in loop, but let's use 5-20 base)
+    // Each upgrade: -1s min and -2s max, min capped at 2, max at 4
+    const level = gameState.upgrades.customerSpawnFasterLevel || 0;
+    let min = 5 - level;
+    let max = 20 - level*2;
+    min = Math.max(2, min);
+    max = Math.max(4, max);
+    return {min, max};
+}
+    function gameLoop() {
+        if (!gameState.isGameRunning) return;
+
+        gameState.timeElapsed++;
+        
+        if (gameState.timeElapsed >= CONFIG.DAY_DURATION_SECONDS) {
+            endGame(true, `Day ${gameState.currentDay} complete! Time ran out, Flo's Fast Food Frenzy closes for the night.`);
+            return;
+        }
+        tickAbilityTimers();
+        // --- 1. Customer Patience Decay ---
+        let patiencePenalty = 0;
+        if (gameState.trashLevel > CONFIG.TRASH_THRESHOLD_PERCENTAGE) {
+            patiencePenalty = CONFIG.CLEANING_PATIENCE_PENALTY;
+            logMessage(`Diner is dirty! Patience decay increased by ${patiencePenalty} due to trash.`, 'text-red-400');
+        }
+
+        Object.values(gameState.tables).forEach(table => {
+            const c = table.customer;
+            if (c) {
+                if (c.state === 'SEATED_WAITING_ORDER' || c.state === 'WAITING_FOOD' || c.state === 'TIP_READY_FOR_COLLECTION') {
+                    c.patience = Math.max(0, c.patience - CONFIG.PATIENCE_DECAY_RATE - patiencePenalty);
+                    
+                    if (c.patience === 0) {
+                        logMessage(`Customer #${c.id} at ${table.id} left angry! Patience ran out.`, 'text-red-400');
+                        gameState.score = Math.max(0, gameState.score - CONFIG.BASE_TIP); 
+                        table.occupied = false;
+                        table.customer = null;
+                        flashMessage(table.id, 'LOST TIP!', 'bg-red-500');
+                    }
+                } 
+                else if (c.state === 'EATING' && !c.eatTimer) {
+                    c.eatTimer = setTimeout(() => {
+                        c.state = 'WAITING_TIP';
+                        logMessage(`Customer at ${table.id} finished eating. Collect the dishes and tip!`);
+                        renderGame(); 
+                        c.eatTimer = null; 
+                    }, 10000);
+                }
+            }
+        });
+        
+        // --- 2. Trash Management (NEW) ---
+        // Spawn trash randomly based on rate and multiplier
+        const chanceToSpawn = gameState.trashSpawnRate * gameState.upgrades.trashSpawnMultiplier;
+        if (Math.random() * 100 < chanceToSpawn) {
+            const trashIncrease = Math.floor(Math.random() * 5) + 1; // Increase trash by 1 to 5
+            gameState.trashLevel = Math.min(gameState.maxTrash, gameState.trashLevel + trashIncrease);
+            // Optional: log a message only when trash is getting high
+            if (gameState.trashLevel > 70) {
+                logMessage(`The diner is getting messy! Trash level is ${gameState.trashLevel}%.`);
+            }
+        }
+        
+    // --- Customer Queue with spawn upgrade ---
+    let {min, max} = getCurrentCustomerSpawnRange();
+    if (gameState.timeElapsed >= gameState.nextCustomerArrival) {
+        spawnCustomer();
+        // Next spawn: random between min and max (in seconds)
+        gameState.nextCustomerArrival = gameState.timeElapsed + Math.floor(Math.random()*(max-min+1)) + min; 
+    }
+
+    renderGame();
+}
+
+    // --- Utility and UI Functions ---
+    
+    function showScreen(screenId) {
+        if (screenId === 'shop-screen') {
+            elements.gameScreen.classList.add('hidden-screen');
+            elements.shopScreen.classList.remove('hidden-screen');
+            renderUpgrades(); 
+            updateShopControls();
+        } else {
+            elements.shopScreen.classList.add('hidden-screen');
+            elements.gameScreen.classList.remove('hidden-screen');
+        }
+    }
+
+    // NEW: Render Trash Status
+    function renderTrash() {
+        const trashPercent = gameState.trashLevel;
+        elements.trashFill.style.width = `${trashPercent}%`;
+
+        let color = 'text-green-700';
+        let status = 'Clean';
+        if (trashPercent > 50) {
+            color = 'text-yellow-700';
+            status = 'Dirty';
+        }
+        if (trashPercent > 80) {
+            color = 'text-red-700';
+            status = 'Filthy!';
+        }
+
+        elements.trashLevelText.textContent = `${status}: ${trashPercent.toFixed(0)}%`;
+        elements.trashLevelText.className = `text-sm font-semibold ${color} mt-1`;
+    }
+
+
+    /**
+     * Displays current active upgrades in both panels, including table capacity.
+     */
+    function renderUpgrades() {
+        const u = gameState.upgrades;
+        const basePatience = CONFIG.BASE_PATIENCE_START;
+        const cookReductionSec = u.baseCookTimeReduction;
+        const trashReduction = (1 - u.trashSpawnMultiplier) * 100;
+        
+        // Data for display
+        const upgradesData = [
+            { 
+                label: 'Table Capacity', 
+                value: `${u.tableCapacity} Tables`, 
+                bonus: u.tableCapacity === 11 ? 'Max' : `${u.tableCapacity}/11`,
+                colorClass: u.tableCapacity === 11 ? 'text-green-400' : 'text-white' 
+            },
+            { 
+                label: 'Base Patience', 
+                value: `${basePatience}ms`, 
+                bonus: u.patienceLevel > 0 ? `+${u.patienceLevel}` : 'Standard',
+                colorClass: u.patienceLevel > 0 ? 'text-green-400' : 'text-white' 
+            },
+            { 
+                label: 'Tray Capacity', 
+                value: `${u.trayCapacity} Order${u.trayCapacity > 1 ? 's' : ''}`, 
+                bonus: u.trayCapacity < CONFIG.MAX_TRAY_CAPACITY ? `${u.trayCapacity}/${CONFIG.MAX_TRAY_CAPACITY}` : 'Max',
+                colorClass: u.trayCapacity === CONFIG.MAX_TRAY_CAPACITY ? 'text-green-400' : 'text-white'
+            },
+            {
+                label: 'Cook Time Speed',
+                value: `-${cookReductionSec.toFixed(1)}s Prep`,
+                bonus: cookReductionSec * 1000 >= CONFIG.MAX_FOOD_PREP_TIME_REDUCTION ? 'Max' : '',
+                colorClass: cookReductionSec > 0 ? 'text-green-400' : 'text-white'
+            },
+            {
+                label: 'Trash Reduction',
+                value: `${trashReduction.toFixed(0)}% Slower`,
+                bonus: u.trashSpawnMultiplier <= 0.5 ? 'Max' : '',
+                colorClass: trashReduction > 0 ? 'text-green-400' : 'text-white'
+            },
+            { 
+                label: 'Tip Multiplier', 
+                value: `x${u.tipMultiplier.toFixed(2)}`, 
+                bonus: u.tipMultiplier > 1 ? 'Bonus' : 'Standard',
+                colorClass: u.tipMultiplier > 1 ? 'text-green-400' : 'text-white'
+            },
+        ];
+// Fix: push the tax reduction as a single entry if present
+if (u.taxReductionPct > 0) {
+    upgradesData.push({
+        label: 'Tax Reduction',
+        value: `-${u.taxReductionPct}%`,
+        bonus: '',
+        colorClass: 'text-green-400'
+    });
+}
+if (u.customerSpawnFasterLevel > 0) {
+        upgradesData.push({
+            label: 'Rush Hour',
+            value: `Level ${u.customerSpawnFasterLevel}`,
+            bonus: 'Faster Spawns',
+            colorClass: 'text-orange-400'
+        });
+    }
+        
+        // 1. Render Game Screen Upgrade Panel
+        const gamePanelHtml = upgradesData.map(item => `
+            <div class="flex flex-col items-center">
+                <span class="text-yellow-300 bg-[#8b0000] font-bold">${item.label}</span>
+                <span class="${item.colorClass} text-xs text-green-500">${item.value} ${item.bonus}</span>
+            </div>
+        `).join('');
+        elements.upgradePanel.innerHTML = gamePanelHtml;
+
+        // 2. Render Shop Screen Current Upgrades (Now includes Tip Multiplier)
+        const shopPanelHtml = upgradesData.map(item => `
+            <div class="flex flex-col items-center bg-gray-700 p-2 rounded-md shadow" style="background: rgb(61, 41, 28)">
+                <span class="text-sm font-bold text-blue-300" style="color: #f2caad;">${item.label}</span>
+                <span style=" font-family: 'Yoster';" class="text-lg font-mono ${item.colorClass}">${item.value} ${item.bonus}</span>
+            </div>
+        `).join('');
+        elements.shopCurrentUpgrades.innerHTML = shopPanelHtml;
+    }
+    
+    function updateShopControls() {
+        // Check against the dynamically changing gameState.upgradeCost
+        const canAfford = gameState.score >= gameState.upgradeCost;
+        const purchaseButton = elements.purchaseUpgradeButton;
+        const shopMessage = elements.shopMessage;
+
+        purchaseButton.disabled = !canAfford;
+        // Update button text to reflect the current, increased cost
+        purchaseButton.textContent = `Purchase Random Upgrade ($${gameState.upgradeCost})`;
+
+        if (!canAfford) {
+            shopMessage.classList.remove('hidden');
+            shopMessage.textContent = `Need $${gameState.upgradeCost} to buy. You currently have $${gameState.score}.`;
+        } else {
+            shopMessage.classList.add('hidden');
+        }
+    }
+
+    function flashMessage(stationId, message, bgColor = 'bg-blue-500') {
+        const station = document.getElementById(stationId);
+        if (!station || station.classList.contains('hidden')) return; // Do not flash if hidden
+        
+        const rect = station.getBoundingClientRect();
+        const boardRect = elements.board.getBoundingClientRect();
+        
+        const float = document.createElement('div');
+        float.className = `float-message ${bgColor} text-white`;
+        float.textContent = message;
+        
+        float.style.left = `${(rect.left - boardRect.left) + rect.width / 2}px`;
+        float.style.top = `${(rect.top - boardRect.top)}px`; 
+        float.style.transform = 'translate(-50%, -100%)';
+
+        elements.board.appendChild(float);
+
+        setTimeout(() => {
+            float.style.opacity = '1';
+            float.style.transform = 'translate(-50%, -150%)';
+        }, 50);
+
+        setTimeout(() => {
+            float.style.opacity = '0';
+            float.style.transform = 'translate(-50%, -200%)';
+            setTimeout(() => elements.board.removeChild(float), 500);
+        }, 1000);
+    }
+    
+    function renderGame() {
+        // Update Status Panel
+        const minutes = Math.floor(gameState.timeElapsed / 60);
+        const seconds = String(gameState.timeElapsed % 60).padStart(2, '0');
+        
+        elements.day.textContent = `Day: ${gameState.currentDay}`;
+        elements.time.textContent = `${minutes}:${seconds}`; 
+        elements.score.style.display = "flex";
+        elements.score.innerHTML = `<img src="Money.png" alt="Money" style="width:1.5rem;height:1.5rem;vertical-align:middle;"><span>x${gameState.score}</span>`;
+
+        elements.foodReadyCount.textContent = gameState.foodReadyCount;
+        elements.queueCount.textContent = gameState.customers.filter(c => c.state === 'ARRIVED').length;
+        
+        // Update Player position (only if not moving)
+        if (!gameState.playerIsMoving) {
+            const pos = currentStationPositions[gameState.playerLocation];
+            elements.player.style.left = pos.left;
+            elements.player.style.top = pos.top;
+        }
+        
+        // Update Tables - iterate over the active tables only
+        Object.keys(gameState.tables).forEach(tableId => {
+            renderCustomer(tableId);
+        });
+        
+        // Update Player icon to show carrying status with images
+        if (gameState.playerCarryingFood > 0) {
+            elements.player.innerHTML = `<img src="Tray.png" alt="Tray" style="width:2.1rem;height:2.1rem;vertical-align:middle;"><span style="font-size:1.1rem;vertical-align:middle;">x${gameState.playerCarryingFood}</span>`;
+        } 
+        else if (gameState.playerCarryingDrinks > 0) {
+            elements.player.innerHTML = `<img src="Water.png" alt="Water" style="width:2.1rem;height:2.1rem;vertical-align:middle;"><span style="font-size:1.1rem;vertical-align:middle;">x${gameState.playerCarryingDrinks}</span>`;
+        } 
+        else {
+            elements.player.textContent = '';
+        }
+        
+        
+
+        // Update Trash Status
+        renderTrash();
+
+        // Update button states
+        elements.goToShopButton.disabled = gameState.isGameRunning; 
+        elements.endDayButton.disabled = !gameState.isGameRunning;
+        
+        if (!elements.shopScreen.classList.contains('hidden-screen')) {
+            updateShopControls();
+        }
+        
+        renderUpgrades();
+    updateAbilityDisplays();
+    updateGetAbilityButtons();
+    updateAbilityButton();
+    }
+    
+    function handleEndDay() {
+        if (gameState.isGameRunning) {
+            const abilityvisual = document.getElementById('game-board');
+            endGame(true, `Flo decided to close early! Day ${gameState.currentDay} ended. Total Score: $${gameState.score}.`);
+            gameState.ability = { cooldown: 0, duration: 0, active: false, state: "ready" };
+            abilityvisual.classList.remove('ability-active-yan', 'ability-active-pela');
+        } else {
+            logMessage('The day hasn\'t started yet!');
+        }
+    }
+
+    function initDOM() {
+        // Apply initial 4-table layout
+        updateLayout(gameState.upgrades.tableCapacity);
+        
+        // Add event listeners for T1-T11 (only active ones will trigger game logic)
+        for (let i = 1; i <= 11; i++) {
+            const tableId = `T${i}`;
+            const station = document.getElementById(tableId);
+            station.addEventListener('click', () => handleAction(tableId));
+        }
+        
+        // Add event listeners for all interactive stations
+        elements.kitchen.addEventListener('click', () => handleAction('KITCHEN'));
+        elements.counter.addEventListener('click', () => handleAction('COUNTER'));
+        elements.queue.addEventListener('click', () => handleAction('QUEUE'));
+        elements.trash.addEventListener('click', () => handleAction('TRASH')); // NEW
+        elements.fridge.addEventListener('click', () => handleAction('FRIDGE'));
+        elements.jukebox.addEventListener('click', () => handleAction('JUKEBOX'));
+
+        // Add event listeners for control buttons
+        elements.resetButton.addEventListener('click', startGame);
+        elements.endDayButton.addEventListener('click', handleEndDay);
+        
+        elements.goToShopButton.addEventListener('click', () => {
+            if (gameState.isGameRunning) {
+                logMessage('You can only access the shop after the day has ended!', 'text-red-400');
+            } else {
+                showScreen('shop-screen');
+            }
+        });
+
+        elements.backToDinerButton.addEventListener('click', () => showScreen('game-screen'));
+        elements.purchaseUpgradeButton.addEventListener('click', handlePurchaseUpgrade); 
+        // Hook up new ability buttons
+    // Hook up new ability buttons
+    const btnShopGetAbility = document.getElementById("shop-get-ability-btn");
+    if (btnShopGetAbility) btnShopGetAbility.onclick = handleGetAbility;
+    const btnAbility = document.getElementById("ability-btn");
+    if (btnAbility) btnAbility.onclick = triggerAbility;
+    updateAbilityDisplays();
+    updateGetAbilityButtons();
+    updateAbilityButton();
+const switchBtn = document.getElementById("switch-character-btn");
+if (switchBtn) {
+  switchBtn.onclick = function() {
+    if (gameState.score < 250 || gameState.isGameRunning) return;
+    gameState.score -= 250;
+    gameState.selectedCharacter = (gameState.selectedCharacter === "Yan" ? "Pela" : "Yan");
+    localStorage.setItem("ffs-selected-character", gameState.selectedCharacter);
+    // Reset ability state
+    gameState.ability = { cooldown: 0, duration: 0, active: false, state: "ready" };
+    renderGame();
+    updateAbilityButton();
+    renderShopCharacterLabel();
+  };
+}
+    }
+
+    function renderShopCharacterLabel() {
+    const btn = document.getElementById("switch-character-btn");
+    const label = document.getElementById("current-character-label");
+}
+
+    function startGame() {
+        if (gameLoopInterval) {
+            clearInterval(gameLoopInterval);
+        }
+        
+        showScreen('game-screen'); 
+
+        // Reset state variables specific to the day
+        gameState.isGameRunning = true;
+        gameState.timeElapsed = 0;
+        gameState.playerLocation = 'QUEUE';
+        gameState.playerIsMoving = false;
+        gameState.playerActionQueue = [];
+        gameState.foodReadyCount = 0;
+        gameState.nextCustomerArrival = 5;
+        gameState.customers = [];
+        gameState.playerCarryingFood = 0; 
+        gameState.trashLevel = 0; // Reset trash for the new day
+        elements.player.classList.remove('bg-yellow-600');
+        
+        // Ensure layout is correct before starting the day (in case the expansion was bought in the shop)
+        updateLayout(gameState.upgrades.tableCapacity); 
+        renderGame();
+        // Reset tables
+        for (const tableId of Object.keys(gameState.tables)) {
+            if (gameState.tables[tableId]?.customer?.eatTimer) {
+                clearTimeout(gameState.tables[tableId].customer.eatTimer);
+            }
+            // Re-initialize only the active tables
+            gameState.tables[tableId] = { occupied: false, customer: null }; 
+            const container = document.getElementById(tableId);
+            if (container) {
+                const customerDisplay = container.querySelector('.customer-display');
+                if (customerDisplay) container.removeChild(customerDisplay);
+                const label = container.querySelector('.table-label');
+                if (label) label.classList.remove('hidden');
+            }
+        }
+        
+        logMessage(`Day ${gameState.currentDay} started! Customers are arriving soon.`);
+        elements.resetButton.textContent = `Day ${gameState.currentDay} In Progress...`;
+        elements.resetButton.disabled = true;
+    
+        spawnCustomer(); 
+        renderGame();
+
+        gameLoopInterval = setInterval(gameLoop, CONFIG.TICK_INTERVAL_MS);
+    }
+    function endGame(won, finalMessage) {
+        gameState.isGameRunning = false;
+        if (gameLoopInterval) {
+            clearInterval(gameLoopInterval);
+        }
+        
+        gameState.currentDay++; 
+        // --- TAX: calculate and deduct ---
+    const baseTax = ((gameState.currentDay-1) * 50) + (Math.floor(Math.random() * 100) + 1);
+    const reductionPct = gameState.upgrades.taxReductionPct || 0;
+    const effectiveTax = Math.round(baseTax * (1 - reductionPct / 100));
+    gameState.score = Math.max(0, gameState.score - effectiveTax);
+    const taxMsg = `📑Tax paid: $${effectiveTax} (Base: $${baseTax}${reductionPct > 0 ? `, -${reductionPct}% from Tax Consultant` : ""})`;
+        const status = 'DAY ENDED! 💰'; 
+
+        logMessage(`${status} ${finalMessage} Head to the shop before starting the next day.`, 'text-white-400');
+        
+        elements.resetButton.textContent = `Start Day ${gameState.currentDay}`;
+        elements.resetButton.disabled = false;
+        
+        // Clear all active customers and timers
+        Object.values(gameState.tables).forEach(table => {
+            if (table.customer && table.customer.eatTimer) {
+                clearTimeout(table.customer.eatTimer);
+            }
+        });
+
+        renderGame(); 
+
+        // Optionally show tax in status
+    setTimeout(() => {
+        elements.message.textContent = `${taxMsg}`;
+    }, 2500);
+    }
+    
+    function logMessage(msg, colorClass = 'text-yellow-300') {
+        elements.message.classList.remove('text-yellow-300', 'text-red-400', 'text-blue-400', 'text-purple-400');
+        elements.message.classList.add(colorClass);
+        elements.message.textContent = msg;
+    }
+
+
+        // ---------- Layout Editor (drag & save positions) ----------
+    function setupLayoutEditor() {
+    const board = elements.board;
+    if (!board) return;
+
+    const stationIds = ['JUKEBOX','FRIDGE','KITCHEN','COUNTER','T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','QUEUE','TRASH'];
+
+    // create snippet modal
+    if (!document.getElementById('layout-snippet')) {
+        const modal = document.createElement('div');
+        modal.id = 'layout-snippet';
+        modal.innerHTML = `<div><strong>Copy this CSS and paste into your &lt;style&gt; to lock positions:</strong></div><pre id="layout-css"></pre><div><button class="close" id="close-layout-snippet">Close</button></div>`;
+        document.body.appendChild(modal);
+        document.getElementById('close-layout-snippet').addEventListener('click', () => modal.style.display = 'none');
+    }
+
+    let layoutMode = false;
+    let draggingEl = null, boardRect = null, offsetX = 0, offsetY = 0;
+
+    // helper: convert element current position from rect to absolute px relative to board
+    function freezeToAbsolute(el) {
+        const elRect = el.getBoundingClientRect();
+        boardRect = board.getBoundingClientRect();
+        const left = elRect.left - boardRect.left;
+        const top  = elRect.top - boardRect.top;
+        el.style.position = 'absolute';
+        el.style.left = Math.round(left) + 'px';
+        el.style.top  = Math.round(top) + 'px';
+        el.style.transform = 'none';
+        el.classList.add('layout-drag');
+    }
+
+    function enableLayout() {
+        // don't allow while game running (safer)
+        if (gameState && gameState.isGameRunning) {
+        alert('Stop the day before editing layout.');
+        return;
+        }
+
+        layoutMode = true;
+        document.getElementById('layout-toggle').classList.add('active');
+        document.getElementById('layout-toggle').textContent = 'Layout Mode: ON';
+
+        // freeze all listed stations to absolute positions (based on their current drawn position)
+        stationIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            // Show all tables in layout mode
+            if (id.match(/^T\d+$/)) {
+                el.classList.remove('hidden');
+            }
+            freezeToAbsolute(el);
+            el.addEventListener('pointerdown', pointerDown);
+            el.style.touchAction = 'none';
+        });
+
+        // track pointer move/up
+        function pointerDown(e) {
+        draggingEl = e.currentTarget;
+        boardRect = board.getBoundingClientRect();
+        const r = draggingEl.getBoundingClientRect();
+        offsetX = e.clientX - r.left;
+        offsetY = e.clientY - r.top;
+        document.addEventListener('pointermove', pointerMove);
+        document.addEventListener('pointerup', pointerUp);
+        draggingEl.style.cursor = 'grabbing';
+        }
+        function pointerMove(e) {
+        if (!draggingEl) return;
+        let x = e.clientX - boardRect.left - offsetX;
+        let y = e.clientY - boardRect.top - offsetY;
+        // clamp to board
+        x = Math.max(0, Math.min(x, board.clientWidth - draggingEl.offsetWidth));
+        y = Math.max(0, Math.min(y, board.clientHeight - draggingEl.offsetHeight));
+        draggingEl.style.left = Math.round(x) + 'px';
+        draggingEl.style.top  = Math.round(y) + 'px';
+        }
+        function pointerUp() {
+        if (draggingEl) {
+            draggingEl.style.cursor = 'grab';
+            draggingEl = null;
+        }
+        document.removeEventListener('pointermove', pointerMove);
+        document.removeEventListener('pointerup', pointerUp);
+        }
+    }
+
+    function disableLayout() {
+        layoutMode = false;
+        document.getElementById('layout-toggle').classList.remove('active');
+        document.getElementById('layout-toggle').textContent = 'Enter Layout Mode';
+        // detach events (they are removed on pointerUp already)
+        stationIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.remove('layout-drag');
+            // Hide tables > current capacity after leaving layout mode
+            if (id.match(/^T(\d+)$/)) {
+                const num = parseInt(id.substring(1), 10);
+                if (num > gameState.upgrades.tableCapacity) {
+                    el.classList.add('hidden');
+                }
+            }
+            try { el.removeEventListener('pointerdown', pointerDown); } catch(e) {}
+        });
+    }
+
+    // Save: generate CSS snippet and also patch currentStationPositions used by movement
+    function savePositions() {
+        // collect positions
+        const cssParts = [];
+        const now = {};
+        stationIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        // ensure element is absolute - if not, compute current rect and convert
+        if (getComputedStyle(el).position !== 'absolute') freezeToAbsolute(el);
+        const left = parseFloat(el.style.left || 0);
+        const top  = parseFloat(el.style.top || 0);
+        cssParts.push(`#${id} { position: absolute; left: ${Math.round(left)}px; top: ${Math.round(top)}px; }`);
+        // update runtime station positions so player movement uses new coords
+        currentStationPositions[id] = { left: `${Math.round(left)}px`, top: `${Math.round(top)}px` };
+        now[id] = { left: Math.round(left), top: Math.round(top) };
+        });
+
+        // also update player position if present (optional)
+        if (currentStationPositions['QUEUE'] && !gameState.playerIsMoving) {
+        if (gameState.playerLocation === 'QUEUE') {
+            elements.player.style.left = currentStationPositions['QUEUE'].left;
+            elements.player.style.top  = currentStationPositions['QUEUE'].top;
+        }
+        }
+
+        // show snippet in modal
+        const modal = document.getElementById('layout-snippet');
+        const pre = document.getElementById('layout-css');
+        pre.textContent = cssParts.join('\n');
+        modal.style.display = 'block';
+        // re-render game so changes take effect immediately
+        renderGame();
+    }
+
+    // wire buttons
+    document.getElementById('layout-toggle').addEventListener('click', () => {
+        if (layoutMode) disableLayout();
+        else enableLayout();
+    });
+    document.getElementById('save-positions').addEventListener('click', savePositions);
+    document.getElementById('reset-positions').addEventListener('click', () => location.reload());
+    }
+
+    // call the setup inside initDOM (initDOM exists in your script, so we call setup after DOM built)
+    // If initDOM already ran, call now; otherwise it will be called inside initDOM after its definitions:
+    try {
+    // ensure elements variable is defined
+    if (typeof elements !== 'undefined') {
+        // attach after a small timeout to ensure UI present
+        setTimeout(setupLayoutEditor, 50);
+    } else {
+        window.addEventListener('load', () => setTimeout(setupLayoutEditor, 50));
+    }
+    } catch(e) {
+    console.warn('Layout editor init failed', e);
+    }
+
+    // Jukebox image alternates every 2 seconds
+setInterval(() => {
+    const jukeboxImg = document.getElementById('jukebox-img');
+    if (!jukeboxImg) return;
+    const currentSrc = jukeboxImg.getAttribute('src');
+    if (currentSrc.includes('Jukebox1.png')) {
+        jukeboxImg.setAttribute('src', 'Jukebox2.png');
+        jukeboxImg.style.width = '175px';
+        jukeboxImg.style.height = '260px';
+        jukeboxImg.style.right = '365px';
+        jukeboxImg.style.top ='45px';
+    } else {
+        jukeboxImg.setAttribute('src', 'Jukebox1.png');
+        jukeboxImg.style.width = '200px';
+        jukeboxImg.style.height = '320px';
+        jukeboxImg.style.right = '343px';
+        jukeboxImg.style.top ='10px';
+    }
+}, 1000);
+window.addEventListener('load', () => {
+    const overlay = document.getElementById('loading-overlay');
+    
+    if (overlay) {
+        // 1. Add the class to start the smooth fade-out
+        overlay.classList.add('hidden-overlay');
+        
+        // 2. Remove the element from the DOM after the transition is complete (500ms in CSS)
+        // This ensures it doesn't accidentally block anything.
+        setTimeout(() => {
+            overlay.remove();
+        }, 6000); // 600ms is slightly longer than the 500ms CSS transition
+    }
+});
+
+    window.onload = initDOM;
+</script>
+</body>
+</html>

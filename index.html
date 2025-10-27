@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The main website of Silly Diner, featuring About Us, Merchandise, access to game, and locations of Silly Diner.">
+    <title>Document</title>
+    <link rel="preload" href="Rowdies-Regular.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="Rowdies-Bold.woff" as="font" type="font/woff" crossorigin>  
+</head>
+<header>
+
+    <nav>
+            <a><img  id="homescreenbutton"src="image-removebg-preview(3).png" onclick="home()" onmouseover="this.src='image-removebg-preview(4).png'; this.style.top='3%';" onmouseout="this.src='image-removebg-preview(3).png'; this.style.top='4%';" style="background-color: transparent; width: 3vw; top: 5%; position: absolute; z-index: 10000000" alt=""></a>
+            <img  id="sillydinerheader"src="image-removebg-preview(5).png" alt="" >
+        <ul><li><a onclick="home()">HOME</a></li>
+            <li><a onclick="switchtotentang()">ABOUT</a></li>
+            <li><a onclick="switchtogame()">GAME</a></li>
+            <li><a onclick="switchtomerch()">MERCH</a></li>
+            <li><a onclick="switchtolocation()">LOCATION</a></li>
+            <li id="showbutton" onclick="myFunction()">
+                <img src="image-removebg-preview(6).png" style="width: 5vw; height: 2vh; z-index: 2000000000000000" alt="">
+            </li>
+    </nav>
+</header>
+                            <ul id="panel">
+                    <div id="insidepanel">
+                        <img  id="insidepanelsilydiner"src="image-removebg-preview(7).png" alt="">
+                   <li><a id="a1" onclick="switchtotentang()">ABOUT</a></li>
+                   <li><a id="a2" onclick="switchtogame()">GAME</a></li>
+                    <li><a id="a3" onclick="switchtomerch()">MERCH</a></li>
+                    <li><a id="a4" onclick="switchtolocation()">LOCATION</a></li>
+                    <li id="a5" onclick="myFunction()">
+                <img src="image-removebg-preview(6).png"  style="width: 5vw; height: 2vh; z-index: 2000000000000000" alt="">
+                    </li>
+                    <li><a id="a6" onclick="home()">HOME</a></li>
+                     </div>
+                    </div>
+               </ul>
+    <div id="loading"><img src="Loading (1).png" alt=""></div>
+<body>
+    <div id="bought-notification">Thanks for your purchase!</div>
+    <section id="homescreen">
+        <div id="checkerbackground" style="display: flex;">
+
+            <div id="inside-insidechecker"></div>
+            <img id="silydinerpng" src="image-removebg-preview(7).png" alt="" >
+            <img src="fryes-removebg-preview.png" id="fryes" alt="" >
+            <div id="insidechecker"></div>
+            <div id="inside-insidechecker2"></div>
+            <div id="LETS-PLAY-BUTTON2"><a href="turnbasetest2(3).html">Let's Get Silly!</a></div>
+            <div id="OHMYFRIES">ABOUT US</div>
+                    <div id="all-shadow"></div>
+            <div id="inside-inside"></div>
+        </div>
+    </section>
+    <section id="tentang">
+        <div id="tentangbackground">
+            <img id="happywaiter" fetchpriority="high" src="Hotdog(1)-min.png" alt="">
+            <h1 id="TentangKami" style="color: #ffdda9">WE'RE HERE TO MAKE YOUR <br> LIFE HAPPIER</h1>
+        </div>
+        <div id="underliententangkami">
+            <img src="Hamburg.png" alt="">
+            <div id="tentangkami3judul" >
+            <h2 id="kt">🍔Best Quality</h2>
+            <h2 id="pr">🍟Friendly Service</h2>
+            <h2 id="ku">🥤Comfort First!</h2>
+            </div>
+            <div id="tentangkami3teks">
+            <h3 id="pil">We serve <br> dishes with <br> selected ingredients and<br> processes that ensure <br>the best taste for<br> every customer.</h3>
+            <h3 id="puas">Your satisfaction is <br> our priority.<br> We always strive <br> to provide <br>the best service with<br> a warm smile.</h3>
+            <h3 id="suasana">We provide a comfortable <br>atmosphere to make every visit <br>a pleasant experience.</h3>
+                </div>
+        </div>
+    </section>
+
+    <section id="game">
+        <div id="checkerbackground2">
+            <img id="sillydinertitle"src="image-removebg-preview(7).png" alt="">
+            <div id="inside-checker-game"></div>
+            <div id="inside-insidechecker-game"></div>
+            <div id="inside-insidechecker2-game"></div>
+            <div id="allshadowgame"></div>
+            <img id="happywaiter2" src="IMG_1843 (1).png" alt="">
+            <div id="trailerthingy"></div>
+            <img id="happywaitress" src="IMG_1845-min (1).png" alt="">
+            <div id="LETS-PLAYGAME"><a href="turnbasetest2(3).html">Play Game!</a></div>
+            <div id="LETS-PLAYGAME" class="trailer"><a href="https://www.youtube.com/watch?v=gNt48UOCTP4">Trailer</a></div>
+        </div>
+<section id="merch" aria-label="Merch Section">
+        <h1 id="merch-heading">CHECK OUT OUR MERCH</h1>
+    <div id="spadesbackground">
+    <!-- Header -->
+
+    
+    <!-- Tabs bar -->
+<div class="merch-tabs" role="tablist" aria-label="Merch categories">
+    <div class="tab left-tab" role="tab" aria-selected="false" tabindex="0">
+        <img class="tab-icon" src="" alt="Mug icon"> <span class="tab-label">MUG</span>
+    </div>
+
+    <div class="tab-center">
+        <div class="tab-center-circle" role="tab" aria-selected="true" tabindex="0">
+            <img class="center-icon" src="" alt="T-Shirt icon"> </div>
+    </div>
+
+    <div class="tab right-tab" role="tab" aria-selected="false" tabindex="0">
+        <img class="tab-icon"  src="" alt="Hat icon"> <span class="tab-label">HAT</span>
+    </div>
+</div>
+  <div id="merch-section">
+
+
+    <!-- Big dashed display area -->
+    <div class="merch-display">
+      <img src="arrow left.png"id="arrow-left"class="arrow arrow-left" aria-label="previous product"></img>
+
+      <div class="merch-main">
+        <div class="merch-image-wrap">
+          <img id="merch-product-image" src="Untitled-removebg-preview.png" alt="T-shirt mockup" />
+          <div class="color-swatches">
+            <button id="blackswatch"class="swatch black" title="Black"></button>
+            <button id="yellowswatch"class="swatch white" title="White"></button>
+            <button id="redswatch"class="swatch red" title="Red"></button>
+          </div>
+        </div>
+
+        <aside class="product-card" aria-labelledby="product-name">
+          <div class="product-card-inner">
+            <h2 id="product-name">Blabla</h2>
+            <p class="product-price">Rp. 50.000</p>
+            <a class="buy-btn" onclick="bought()" style="cursor: pointer;">BUY</a>
+          </div>
+        </aside>
+      </div>
+
+      <img src="arrow right.png"id="arrow-right"class="arrow arrow-right" aria-label="next product"></img>
+    </div>
+  </div>
+  </div>
+</section>
+
+    <section id="locations">
+        <div id="locationbackground">
+            <div id="curved-text">
+            <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMin meet" role="img" aria-label="ALL AROUND YOU">
+                <!-- wide, gentle arc: increase rx,ry for gentler curve -->
+                <path id="curve" d="M 50,200 A 450,450 0 0,1 950,200" fill="transparent"/>
+                <text>
+                <!-- center text on path -->
+                <textPath href="#curve" startOffset="50%" text-anchor="middle" dominant-baseline="middle">
+                    ALL AROUND YOU!
+                </textPath>
+                </text>
+            </svg>
+            </div>
+            <div id="Locationtexts1">
+                <h2>Silly Diner -<br></h2>
+                    <p>Destin Harbor, <br> Florida</p>
+            </div>
+            <div id="Locationtexts2">
+                <h2>Silly Diner -<br></h3>
+                    <p>Ciputra World <br> Surabaya</p>
+            </div>
+            <div id="Locationtexts3">
+                <h2>Silly Diner -</h2>
+                    <p>South Dixie Hwy, <br> Miami</p>
+            </div>
+            <div id="Locationtexts4">
+                <h2>Silly Diner -</h2>
+                    <p>Kuta Beachwalk, <br> Bali</p>
+            </div>
+            <img id="goofy-earth"src="Location mascot(1) (1).png" alt="">
+            <div id="contact-us">
+                <p>Contact Us</p>
+            <div id="socialmedimagefooter">
+                <a href="https://www.facebook.com/share/17MeX6o5kF/"><img src="Fb button_button(1).png" alt=""></a>
+                <a href="https://x.com/SillyDinner?t=Y3MG08asiEh83G0tifNjbw&s=08"><img src="Twitter button_footer(1).png" alt=""></a>
+                <a href="https://www.youtube.com/@SillyDiner"><img src="Yt button_footer(1).png" alt=""></a>
+                <a href="https://www.instagram.com/silly.diner?igsh=b2luNDhiZmhlYmQ5"><img src="Insta button_footer(1).png" alt=""></a>
+            </div>
+            <h3>©E Corporation Indonesia 2025. All Rights Reserved.</h3></div>
+        </div>
+    </section>
+</body>
+</html>
+
+<style>
+.trailer {
+    top: -30vh;
+}
+    #tentangkami3judul {
+        display: flex;
+                font-size: 1.5vw;
+    }
+    #tentangkami3teks {
+        display: flex;
+        text-align: center;
+        font-size: 1.25vw;
+    }
+#kt {
+    position: absolute;
+    transform: translateX(2.5vw) translateY(-6.5vh);
+}
+#pr {
+    position: absolute;
+    transform: translateX(30vw) translateY(-6.5vh);
+}
+#ku {
+    position: absolute;
+    transform: translateX(65vw) translateY(-6.5vh);
+}
+#pil {
+    position: absolute;
+    transform: translateX(1.5vw) translateY(0vh);
+}
+#puas {
+    position: absolute;
+    transform: translateX(34.5vw) translateY(0vh);
+}
+#suasana {
+    position: absolute;
+    transform: translateX(63vw) translateY(0vh);
+}
+@media (orientation: portrait) {
+.trailer {
+    top: -5vh;
+}
+     #goofy-earth {
+        display: flex;
+        position: absolute;
+        min-width: 100vw;
+        max-width: 100vw;
+        width: 100vw;
+        min-height: 40vh;
+        max-height: 40vh;
+        height: 40vh;
+        top: -21.25vh;
+        left: -33.75vw;
+    }
+    #socialmedimagefooter {
+        display: flex;
+        justify-content: center;
+        gap: 0.5vw;
+    }
+    #socialmedimagefooter img {
+        min-width: 10vw;
+        min-height: 5vh;
+    }
+    #tentangkami3teks {
+        font-size: 5vw;
+    }
+    #kt {
+    position: absolute;
+    left: 5vw;
+}
+#pr {
+    position: absolute;
+    left: 35vw;
+}
+#ku {
+    position: absolute;
+    left: 75vw;
+    top: 0.5vh;
+}
+#pil {
+    position: absolute;
+    top: 3vh;
+}
+#puas {
+    position: absolute;
+    left: 32.5vw; top: 3vh;
+}
+#suasana {
+    position: absolute;
+    left: 70vw; top: 5vh;
+}
+}
+            /* --- NEW NOTIFICATION STYLES --- */
+        #bought-notification {
+            position: fixed;
+            top: 100%;
+            left: 50%;
+            /* Center the element based on its own size */
+            transform: translate(-50%, -100%);
+            
+            background-color: #452920; /* Green background */
+            color: #ffdda9;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2000; /* Ensure it's above everything else */
+            
+            opacity: 0; /* Initially hidden */
+            pointer-events: none; /* Prevents blocking clicks when invisible */
+            
+            /* Fade out animation: 0.5s transition time */
+            transition: opacity 0.5s ease-out; 
+        }
+/* MERCH SECTION (new) */
+
+#merch {
+  position: relative;
+  width: 100vw;
+  background: rgba(255,242,225,1);
+  box-sizing: border-box;
+  font-family: 'Rowdies', sans-serif;
+}
+
+/* Container */
+#merch-section {
+  max-width: 60vw;
+  height: 40vh;
+  position: absolute;
+  transform: translateX(28vw);
+}
+
+/* Heading */
+#merch-heading {
+  font-family: 'Rowdies Bold', sans-serif;
+  font-size: 3.25vw;
+  color: #452920;
+position: absolute;
+  transform: translateX(27.5vw) translateY(-10vh);
+}
+
+/* Tabs bar */
+.merch-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 64vw;
+  max-width: 64;
+  transform: translateX(16.5vw) translateY(-3vh);
+  background: #452920;
+  padding: 0.7rem 1rem;
+  border-radius: 2rem;
+  position: absolute;
+  height: 5.6vh;
+  box-sizing: border-box;
+}
+.tab-label {
+    color: #e6b65c;
+}
+.tab-label:hover {
+    font-size: 1.2vw;
+    color: yellow;
+    z-index: 10000000;
+}
+.merch-tabs .tab {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #ffdda9;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+.merch-tabs .tab-icon { font-size: 1.1rem; width: 2vw; height: 2vw; }
+
+/* center circular tab */
+.merch-tabs .tab-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-40%);
+  pointer-events: none;
+}
+.tab-center-circle {
+  width: 3.5vw;
+  height: 7vh;
+  border-radius: 50%;
+  transform: translateY(3.5vh);
+  z-index: 100000000000000;
+  background:#e6b65c;
+  border: 0.6rem solid #452920;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events: auto;
+  box-sizing: content-box;
+}
+.center-icon { font-size: 1.6rem; width: 2vw; height: 2vw;}
+
+/* Big dashed display */
+.merch-display {
+    transform: translateX(-10vw);
+  border-radius: 1.6rem;
+  margin-top: 5vh;
+  border: 0.6rem dashed #452920;
+  background: rgba(255,242,225,0.95);
+  padding: 6vh 18vw;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-sizing: border-box;
+  z-index: 0;
+}
+
+/* arrows */
+.arrow {
+  background: transparent;
+  position: absolute;
+transform:  translateX(-12.5vw);
+  border: 0.6rem solid transparent;
+  border-radius: .8rem;
+  width: 4.2rem;
+  height: 4.2rem;
+  font-size: 2rem;
+  color: #452920;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+#arrow-right {
+    transform: translateX(10vw);
+}
+.arrow:hover { transform:  translateX(-12.5vw)translateY(-0.3vw); 
+  box-shadow: 0 6px 0 rgba(69,41,32,0.2);}
+#arrow-right:hover {
+    transform: translateX(10vw) translateY(-0.3vw);
+      box-shadow: 0 6px 0 rgba(69,41,32,0.2);
+}
+/* main area with image + card */
+.merch-main {
+  display:flex;
+  align-items:center;
+  justify-content: center;
+  gap: 4vw;
+  flex: 1 1 auto;
+  min-height: 40vh;
+  box-sizing: border-box;
+}
+
+/* product image */
+.merch-image-wrap {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 2vh;
+  flex: 0 0 45%;
+  min-width: 15vw;
+  width: 15vw;
+  max-width: 15vw;
+}
+.merch-image-wrap img#merch-product-image {
+  max-width: 15vw;
+  width: 15vw;
+  height: auto;
+  display:block;
+  transform: translateX(-5vw) translateY(0);
+  box-shadow: none;
+  max-height: 40vh;
+}
+
+/* color swatches */
+.color-swatches {
+  display:flex;
+  gap: 0.8vw;
+  align-items:center;
+  transform: translateX(-4.75vw);
+}
+.color-swatches .swatch {
+  width: 2.2vw;
+  height: 2.2vw;
+  border-radius: 50%;
+  border: 0.2vw solid #452920;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.color-swatches .black { background: #000;}
+.color-swatches .white { background: #fff; }
+.color-swatches .red { background: #d85b49; }
+.color-swatchoutline {
+    border-color: yellow;
+    box-shadow: 0.1vw 0.1vw 1vw yellow;
+}
+/* product card on right */
+.product-card {
+  flex: 0 0 20vw;
+  width: 20vw;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing: border-box;
+}
+.product-card .product-card-inner {
+    position: absolute;
+    transform: translateX(-1vw);
+  width: 15vw;
+  padding: 2.2vw;
+  background: #da5b45;
+  border-radius: 0.8vw;
+  border: 0.5vw dashed #452920;
+  box-shadow: 1.2vw 1vw rgba(69,41,32);
+  text-align:center;
+}
+
+/* product text */
+.product-card h2 {
+  font-family: 'Rowdies Bold';
+  color: #fff2e1;
+  margin: 0 0 0.8vw;
+  font-size: 2.2vw;
+}
+.product-price {
+  font-weight: 700;
+  color: #fff2e1;
+  font-size: 1.25vw;
+  margin: 0 0 1.5vw;
+}
+
+/* buy button */
+.buy-btn {
+  display:inline-block;
+  background: #452920;
+  color: #fff2e1;
+  padding: 0.9vw 2vw;
+  border-radius: 1.2vw;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1.05vw;
+  box-shadow: 0 0.6vw 0 rgba(0,0,0,0.12);
+}
+.buy-btn:hover {
+    color: yellow;
+    font-size: 1.25vw;
+}
+
+/* Responsive tweaks */
+@media (orientation: portrait) {
+    .merch-tabs .tab-icon { width: 4vw; height: 4vw;}
+    .center-icon { font-size: 1.6rem; width: 6vw; height: 6vw;}
+    .product-card {
+        transform: translateX(-10vw) translateY(22.5vh);
+  flex: 0 0 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing: border-box;
+}
+            /* --- NEW NOTIFICATION STYLES --- */
+        #bought-notification {
+            font-family: 'Rowdies';
+            position: fixed !important;
+            top: 48% !important;
+            left: 50% !important;
+            /* Center the element based on its own size */
+            transform: translate(-50%, -48%);
+            
+            background-color: #452920; /*background */
+            color: #ffdda9;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2000; /* Ensure it's above everything else */
+            
+            opacity: 0; /* Initially hidden */
+            pointer-events: none; /* Prevents blocking clicks when invisible */
+            
+            /* Fade out animation: 0.5s transition time */
+            transition: opacity 0.5s ease-out; 
+        }
+.buy-btn {
+    transform: translateY(-1vh);
+width: 20vw;
+height: 2vh;
+line-height: 2vh;
+font-size: 3.25vw;
+}
+.buy-btn:hover {
+    color: yellow;
+    font-size: 4.45vw;
+}
+
+.product-card-inner {
+        position: absolute;
+    transform: translateX(-1vw);
+    top: -30vw;
+  width: 55vw;
+  min-width: 55vw;
+  padding: 2.2vw;
+  background: #da5b45;
+  border-radius: 0.8vw;
+  border: 0.5vw dashed #452920;
+  box-shadow: 1.2vw 1vw rgba(69,41,32);
+  text-align:center;
+}
+.arrow {
+    background: transparent;
+  position: absolute;
+  border: 0.6rem solid transparent;
+  border-radius: .8rem;
+  width: 10vw;
+  height: 4vh;
+  font-size: 2rem;
+  color: #452920;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+#arrow-left {
+    transform: translateX(-15vw);
+}
+#arrow-left:hover {
+    transform: translateX(-15vw)translateY(-0.5vw);
+    box-shadow: 0 6px 0 rgba(69,41,32,0.2);
+}
+#arrow-right {
+    transform: translateX(50vw);
+}
+#arrow-right:hover {
+    transform: translateX(50vw) translateY(-0.5vw);
+    box-shadow: 0 6px 0 rgba(69,41,32,0.2);
+}
+.product-card h2 {
+  font-family: 'Rowdies Bold';
+  color: #fff2e1;
+  font-size: 4.25vw;
+}
+.product-price {
+  color: #fff2e1;
+  font-family: 'Rowdies Bold';
+  font-size: 4.25vw;
+  margin: 0 0 1.5rem;
+}
+
+    .tab-label:hover {
+    font-size: 4.25vw;
+    font-weight: bold;
+    z-index: 100000;
+    color:#ffcc6d;
+        overflow: visible;
+}
+    #merch {
+        transform: translateY(-31vh);
+    }
+#merch-heading {
+    position: absolute;
+  font-family: 'Rowdies Bold', sans-serif;
+  font-size: 5.25vw;
+  color: #452920;
+position: absolute;
+  transform: translateX(15vw) translateY(31vh);
+}
+.merch-tabs {
+    z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 98vw;
+  max-width: 98vw;
+  transform: translateX(1vw) translateY(-2vh);
+  background: #452920;
+  padding: 0.7rem 1rem;
+  border-radius: 2rem;
+  position: absolute;
+  height: 2.6vh;
+  box-sizing: border-box;
+}
+.tab-center-circle {
+  width: 15vw;
+  height: 5vh;
+  border-radius: 50%;
+  transform: translateY(2.5vh);
+  z-index: 100000000000000;
+  background:#e6b65c;
+  border: 0.6rem solid #452920;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events: auto;
+  box-sizing: content-box;
+}
+.merch-display {
+    transform: translateX(-25vw);
+    height: 20vh;
+    width: 96vw;
+  border-radius: 1.6rem;
+  margin-top: 3vh;
+  border: 0.6rem dashed #452920;
+  background: rgba(255,242,225,0.95);
+  padding: 18vw;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-sizing: border-box;
+  z-index: 0;
+}
+#merch-product-image {
+    position: absolute;
+    top: 5%;
+    right: 27%;
+    max-width: 35.5vw;
+    width: 35.5vw;
+    min-width: 35.5vw;
+    max-height: 20vh;
+
+}
+.color-swatches {
+    position: absolute;
+    transform: translateX(13.5vw) translateY(8.5vh);
+    min-width: 20vw;
+    width: 20vw;
+    max-width: 20vw;
+}
+.color-swatches .swatch {
+  width: 15.2vw;
+  height: 6.2vw;
+  border-radius: 50%;
+  border: 0.2vw solid #452920;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+}
+
+    #underliententangkami h2 {
+        font-family: 'Rowdies';
+        color:#452920;
+    }
+        #underliententangkami h3 {
+        font-family: 'Rowdies';
+        color:#452920
+    }
+    #homescreen {
+                transform: translateY(10vh);
+    }
+    #tentang {
+                transform: translateY(10vh);
+    }
+    #game {
+                transform: translateY(55vh);
+    }
+    #spadesbackground {
+                transform: translateY(15vh);
+    }
+    #locations {
+                transform: translateY(25vh);
+    }
+    #Locationtexts1 {
+        position: absolute;
+        left: 5vw;
+        top: 35vh;
+        font-size: 2.25vw;
+        color: #ffcc6d;  
+        text-shadow: 0.1vw 0.1vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts2 {
+        position: absolute;
+        left: 5vw;
+        top: 70vh;
+        font-size: 2.25vw;
+        color: #ffcc6d;  
+        text-shadow: 0.1vw 0.1vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts3 {
+        position: absolute;
+        right: 5vw;
+        top: 35vh;
+        font-size: 2.25vw;
+        color: #ffcc6d;  
+        text-shadow: 0.1vw 0.1vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts4 {
+        position: absolute;
+        right: 5vw;
+        top: 70vh;
+        font-size: 2.25vw;
+        color: #ffcc6d;  
+        text-shadow: 0.1vw 0.1vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+#curved-text{
+  position: absolute;
+  left: 50%;
+  top: 70vh;                /* move this up/down to sit where you want above the pin */
+  transform: translateX(-50%);
+  width: 86vw;             /* how wide the arc is relative to viewport */
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* SVG sizing */
+#curved-text svg {
+  width: 100%;
+  height: 26vh;            /* controls vertical space used by arc; tweak as needed */
+  overflow: visible;
+  display: block;
+}
+
+/* text styling on the path */
+#curved-text text {
+  font-family: 'Rowdies Bold', sans-serif;
+  font-size: 5.2vw;        /* responsive size — tweak (4.5vw - 6vw) until it matches exactly */
+  fill: #ffcc6d;           /* your yellow */
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* make sure the curve text stays readable on small screens */
+    #socialmedimagefooter {
+        display: flex;
+        justify-content: center;
+        gap: 0.5vw;
+    }
+    #socialmedimagefooter img {
+        width: 2.5vw;
+        height: 5vh;
+    }
+    #contact-us {
+        position: absolute;
+        background-color: #452920;
+        justify-content: center;
+        text-align: center;
+        color: #ffdda9;
+        font-family: 'Rowdies Bold';
+        width: 100vw;
+        height: 20.5dvh;
+        font-size: 0.85vw;
+        top: 99.5%;    
+    }
+    #goofy-earth {
+        transform: translateX(33.5vw) translateY(61.5vh);
+        position: absolute;
+        width: 35vw;
+        height: 68.5vh;
+    }
+    #goofy-earth:hover {
+                animation: spin 5s normal linear infinite;
+    }
+    #locationbackground {
+        position: absolute;
+        display: block;
+        background-color: #d04b35;
+        margin-top: 10vh;
+    margin-bottom: 1.5vh;
+        width: 100vw;
+        min-height: 130.3dvh;
+        background: #D95943;
+background: linear-gradient(0deg,rgba(217, 89, 67, 1) 75%, rgba(255, 242, 225, 1) 95%);
+
+    }
+    #merch1{
+        position: absolute;
+        margin-left: 3vw;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    #merch1 img {
+        width: 20vw;
+        height: 35vh;
+    }
+    #merch1:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 15vw;
+        height: 30vh;
+    }
+    #merch1:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30vw;
+        height: 65vh;
+        transform: translateY(-3vh);
+    }
+    #merch1price {
+        display: none;
+    }
+    #merch1buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 5vh;
+        font-size: 1.25vw;
+        line-height: 5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch1:hover #merch1price {
+        display: block;
+        transform: translateY(-1.5vh);
+    }
+    #merch1:hover #merch1buy {
+        display: block;
+        transform: translateX(10vw) translateY(-2vh);
+    }
+    #merch2 {
+        position: absolute;
+        transform: translateX(40vw);
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+        
+    }
+        #merch2 img {
+        width: 20vw;
+        height: 35vh;
+    }
+    #merch2:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 15vw;
+        height: 30vh;
+    }
+    #merch2:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30vw;
+        height: 65vh;
+        transform: translateX(33vw) translateY(-3vh);
+    }
+    #merch2price {
+        display: none;
+    }
+    #merch2buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 5vh;
+        font-size: 1.25vw;
+        line-height: 5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch2:hover #merch2price {
+        display: block;
+        transform: translateY(-1.5vh);
+    }
+    #merch2:hover #merch2buy {
+        display: block;
+        transform: translateX(10vw) translateY(-2vh);
+    }
+    #merch3 {
+        position: absolute;
+        transform: translateX(75vw);
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    #merch3 img{
+        width: 20vw;
+        height: 35vh;
+    }
+    
+    #merch3:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 15vw;
+        height: 30vh;
+    }
+    #merch3:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30vw;
+        height: 65vh;
+        transform: translateX(70vw) translateY(-3vh);
+    }
+    #merch3price {
+        display: none;
+    }
+    #merch3buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 5vh;
+        font-size: 1.25vw;
+        line-height: 5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch3:hover #merch3price {
+        display: block;
+        transform: translateY(-1.5vh);
+    }
+    #merch3:hover #merch3buy {
+        display: block;
+        transform: translateX(10vw) translateY(-2vh);
+    }
+    #spadesbackground h2 {
+        color:#fff2e1;
+        font-family: 'Rowdies Bold';
+    }
+    #spadesbackground h1 {
+        position: absolute;
+        color:#452920;
+        font-family: 'Rowdies Bold';
+        font-size: 4.5vw;
+        transform: translateX(20vw) translateY(-30.5vh);
+    }
+    #spadesbackground {
+        gap: 18vw;
+        display: block;
+        background-color: #d04b35;
+        margin-top: 7.5vw;
+    margin-bottom: 1.5vh;
+        width: 100vw;
+        min-height: 70dvh;
+        background-image: url('image-removebg-preview(10).png');
+        background-size: 100vw 100vh;
+          animation: movebg 20s normal linear infinite;
+    }
+    #sillydinertitle {
+        background-color: transparent; display: flex; z-index: 100000;  position: absolute; width: 55vw; height: 25vh; transform: translateX(21vw) translateY(-0vh);
+    }
+    #LETS-PLAYGAME a {
+                text-decoration: none;
+        color: #ffdda9;
+    }
+    #LETS-PLAYGAME a:hover {
+        color: #ffdda9;
+    }
+    #LETS-PLAYGAME:hover {
+        background-color: #5d392d;
+        border-color: #452920;
+        color: #452920;
+    }
+    #LETS-PLAYGAME {
+        text-decoration: none;
+        position: absolute;
+        left: 40%; transform: translateY(64vh);
+        background-color: #d04f39;
+        border: 0.6vw solid #452920;
+        width: 20vw;
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
+        height: 10vh;
+        border-radius: 1.5vw;
+        display: flex;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.25vw;
+        color: #452920;
+        font-family: 'Rowdies Bold', sans-serif;
+        z-index: 10000;
+        box-shadow: 5px 10px;
+    }
+    #trailerthingy {
+        transform: translateX(15vw) translateY(15vh);
+        position: absolute;
+        background-color:#e6b65c;
+        width: 67vw;
+        height: 46dvh;
+        border-radius: 1vw;
+        text-align: center;
+        justify-content: center;
+        font-size: 1.25vw;
+        line-height: 50vh;
+    }
+    #happywaitress {
+        position: absolute;
+        transform: translateX(65vw) translateY(20vh);
+        width: 32.5vw;
+        min-height: 60dvh;
+        height: 60dvh;
+        z-index: 100; 
+    }
+        #happywaiter2 {
+            position: absolute;
+        transform: translateY(19.8vh);
+        width: 32.5vw;
+        min-height: 62dvh;
+        height: 62dvh;
+        z-index: 100;
+    }
+    #allshadowgame {
+        position: absolute;
+        display: flex;
+                background-color: transparent;
+        width: 97vw;
+        min-width: 97vw;
+        max-width: 97vw;
+        min-height: 80dvh;
+        height: 80dvh;
+        max-height: 80dvh;
+        border-radius: 2vw;
+        box-shadow: inset 0 0 5vw 5vh rgba(0, 0, 0, 0.65);
+        z-index: 100;
+    }
+    #inside-checker-game {
+        position: absolute;
+        transform: translateX(30%); transform: translateY(12.5%);
+        background-color: #d95943;
+        width: 97vw;
+        height: 65vh;
+    }
+        #inside-insidechecker-game {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(8vh);
+        background-color: white;
+        width: 97vw;
+        height: 1.5vh;
+        z-index: 10;
+    }
+    #inside-insidechecker2-game {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(72vh);
+        background-color: white;
+        width: 97vw;
+        height: 1.5vh;
+    }
+    #checkerbackground2 {
+        display: block;
+        background-color: #ffffff;
+        margin-top: 1.5vw;
+        margin-left: 1.5vw;
+        margin-right: 1.5vw;
+    margin-bottom: 1.5vh;
+        width: 97vw;
+        min-height: 80dvh;
+        border-radius: 2vw;
+        background-image: url('image-removebg-preview(2).png');
+        background-size: 50vw 50vw;
+          animation: movebg 20s normal linear infinite;
+    }
+    #TentangKami {
+        position: absolute;
+        font-family: 'Rowdies Bold';
+        color: #452920;
+        transform: translateX(25vw) translateY(-30vh);
+        font-size: 4.25vw;
+    }
+    #tentangbackground h3{
+        font-family: 'Rowdies Bold';
+        color: #452920;
+        position: absolute;
+        transform: translateX(50vw) translateY(-66vh);
+        text-justify: auto;
+        font-size: 1.51825vw;
+    }
+    #underliententangkami {
+        position: absolute;
+        border-bottom-style: dashed ;
+        border-bottom-color: #d04b35;
+        border-bottom-width: 0.25vw;
+        width: 90vw;
+        height: 1vh;
+        border-radius: 1vw;
+        transform: translateY(1.25vh) translateX(5vw);
+        justify-content: center;
+        align-items: center;
+
+    }
+    #underliententangkami img{
+        width: 3vw;
+        transform: translateX(42.8vw) translateY(-2vh);
+    }
+    #sillydinerheader {
+        position: absolute; width: 13vw; left: 7%
+    }
+    #fryes {
+        overflow: hidden; background-color: transparent;  display: flex; z-index: 100000; position: absolute; width: 30vw; height: 75vh; transform: translateX(65vw) translateY(1vh); animation: moveUpDown 5s normal linear infinite; 
+    }
+
+    #silydinerpng {
+        background-color: transparent; display: flex; z-index: 100000;  position: absolute; width: 50%; height: 30vh; transform: translateX(9vw) translateY(18vh);
+    }
+    #panel {
+        display: none;
+        background-color: rgb(255, 255, 255);
+        position: fixed;
+        width: 97.5vw;
+            margin-top: 0;
+            margin-left: 0;
+            margin-right: 0;
+        padding: 1.5vh 1.2vw;
+        z-index: 1000000000000000000000000000000000000;
+        border-bottom-right-radius: 2vw;
+        border-bottom-left-radius: 2vw;
+    }
+    #insidepanel {
+        border-radius: 2vw;
+        background-color: #ffffff;
+        height: 40vh;
+        width: 95vw;
+        z-index: 1000000000000000000000000000000000000;
+    }
+    #happywaiter {
+        transform: translateX(2vw) translateY(33.2%);
+        min-height: 30dvh;
+        height: 30dvh;
+    }
+    #insidepanelsilydiner {
+        position: absolute; width: 60vw; left: 20%; transform: translateY(-3%);
+    }
+    #insidepanel li {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: right;
+        margin: 0 0.5vw;
+    }
+    #insidepanel li a {
+        cursor: pointer;
+        position: absolute;
+        font-family: 'Rowdies', sans-serif;
+        width: 30vw;
+        padding-left: 1.2vw;
+        padding-right: 1.2vw;
+        margin: 4vw; 
+        height: 4vh;
+        border-radius: 0.5vw;
+        display: flex;
+        color: white;
+        text-decoration: none;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #452920;
+        z-index: 50000000000000000000000;
+    }
+    #a1 {
+        left: 27vw;
+        transform: translateY(12vh);
+        border-bottom: 1vw solid #000000;
+    }
+    #a1:hover {
+        color: rgb(168, 228, 255);
+    }
+    #a2 {
+        left: 27vw;
+        transform: translateY(19vh);
+        border-bottom: 1vw solid #000000;
+    }
+    #a2:hover {
+        color: rgb(168, 228, 255);
+    }
+    #a3 {
+        left: 27vw;
+        transform: translateY(26vh);
+        border-bottom: 1vw solid #000000;
+    }
+    #a3:hover {
+        color: rgb(168, 228, 255);
+    }
+    #a4 {
+        left: 27vw;
+        transform: translateY(33vh);
+    }
+    #a4:hover {
+        color: rgb(168, 228, 255);
+    }
+    #a5 {
+        position: absolute;
+        left: 90vw;
+        transform: translateY(2vh);
+    }
+    #a5:hover {
+        color: rgb(168, 228, 255);
+        cursor: pointer;
+    }
+    #a6 {
+        left: 27vw;
+        transform: translateY(5vh);
+        border-bottom: 1vw solid #000000;
+    }
+    #a6:hover {
+        color: rgb(168, 228, 255);
+    }
+    #LETS-PLAY-BUTTON2 a {
+        text-decoration: none;
+        color: #452920;
+        
+    }
+    #LETS-PLAY-BUTTON2 a:hover {
+        color: #ffdda9;
+    }
+    #LETS-PLAY-BUTTON2:hover {
+        background-color: #5d392d;
+        border-color: #452920;
+        color: #452920;
+    }
+    #OHMYFRIES {
+        line-height: 10vh;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+        font-family: 'Rowdies Bold', sans-serif;
+        font-size: 3vw;
+        background-color: #fff2e1;
+        position: absolute;
+        width: 60vw;
+        height: 10vh;
+        transform: translateX(-5%) translateY(70vh);
+        border-top-left-radius: 1vw;
+        border-top-right-radius: 1.3vw;
+        z-index:1000000;
+    }
+    #LETS-PLAY-BUTTON2 {
+        text-decoration: none;
+        position: absolute;
+        left: 25%; transform: translateY(48vh);
+        background-color: #e6b65c;
+        border: 0.4vw solid #452920;
+        width: 20vw;
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
+        height: 10vh;
+        border-radius: 1.5vw;
+        display: flex;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75vw;
+        color: #452920;
+        font-family: 'Rowdies Bold', sans-serif;
+        z-index: 1000;
+        box-shadow: 5px 10px;
+    }
+    #LETS-PLAY-BUTTON2:hover {
+        font-size: 2.25vw;
+    }
+    #all-shadow {
+        position: absolute;
+        display: flex;
+                background-color: transparent;
+        width: 97vw;
+        min-width: 97vw;
+        max-width: 97vw;
+        min-height: 80dvh;
+        height: 80dvh;
+        max-height: 80dvh;
+        border-radius: 2vw;
+        box-shadow: inset 0 0 5vw 5vh rgba(0, 0, 0, 0.65);
+        z-index: 100;
+    }
+    #inside-insidechecker {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(17vh);
+        background-color: white;
+        width: 97vw;
+        height: 1.5vh;
+        z-index: 10;
+    }
+    #inside-insidechecker2 {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(66vh);
+        background-color: white;
+        width: 97vw;
+        height: 1.5vh;
+    }
+    
+    #insidechecker {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(35%);
+        background-color: #d95943;
+        width: 97vw;
+        height: 50vh;
+    }
+
+    #checkerbackground {
+        background-color: #452920;
+        margin-left: 1.5vw;
+        margin-right: 1.5vw;
+    margin-bottom: 1.5vh;
+        width: 97vw;
+        min-height: 80dvh;
+        border-radius: 2vw;
+        background-image: url('image-removebg-preview(2).png');
+        background-size: 50vw 50vw;
+          animation: movebg 15s normal linear infinite;
+    }
+    #tentangbackground {
+        display: block;
+        background-color: #d04b35;
+        margin-top: 1.5vw;
+        margin-left: 1.5vw;
+        margin-right: 1.5vw;
+        margin-bottom: 1.5vh;
+        width: 95vw;
+        min-height: 40dvh;
+        height: 40dvh;
+        border-radius: 2vw;
+        background-size: 50vw 50vw;
+    }
+    @font-face {
+        font-family: 'Rowdies';
+        font-display: swap;
+        src: url('Rowdies-Regular.woff') format('woff');
+    }
+    @font-face {
+        font-family: 'Rowdies Bold';
+        font-display: swap;
+        src: url('Rowdies-Bold.woff') format('woff');
+    }
+    @keyframes movebg {
+  0% { background-position: 0 0, 1.5vw 1.5vw; }
+  100% { background-position: 50vw 0, 50vw 50vw; }
+}
+@keyframes bounce {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(-50px); }
+      100% { transform: translatex(0); }
+    }
+.bounceanimate {
+    animation: bounce linear 2s ease-in-out;
+}
+    /* Animation class */
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #fff2e1;
+        width:auto;
+    }
+
+    header {
+        position: fixed;
+        background-color: #d95943;
+        color: white;
+        border: 0.25vw solid white;
+        padding: 0.25vw 0;
+        border-radius: 1vw;
+        width: 100vw;
+        height: 8vh;
+        display: flex;
+        z-index: 99999999999999999999999999999999999999999999999999999999999999999999999;
+
+    }
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 1.5vh 1.2vw;
+    }
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: right;
+    }
+
+    nav ul li {
+        display: flex;
+        justify-content: right;
+        margin: 0 8vw;
+    }
+
+    nav ul li a {
+        cursor: pointer;
+        position: absolute;
+        transform: translateX(24vw) translateY(-3vh);
+        font-family: 'Rowdies', sans-serif;
+        background-color: #e6b65c;
+        border: 0.4vw solid #452920;
+        gap: 10vw;
+        margin-left: 5vw;
+        width: 8vw;
+        padding-left: 2vw;
+        padding-right: 2vw;
+        height: 5vh;
+        border-radius: 0.5vw;
+        display: flex;
+        color: white;
+        text-decoration: none;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 2vw;
+        color: #452920;
+        z-index: 50000000000000000000000;
+    }
+
+    nav ul li a:hover {
+        text-decoration: bold;
+        background-color: #ffb84d;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+    nav ul li img {
+        display: none;
+    }
+    @media screen and (orientation: portrait) {
+        #Locationtexts1 {
+        position: absolute;
+        left: 3vw;
+        top: 30vh;
+        font-size: 4vw;
+        color: #ffcc6d;  
+        text-shadow: 0.2vw 0.2vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts2 {
+        position: absolute;
+        left: 3vw;
+        top: 45vh;
+        font-size: 4vw;
+        color: #ffcc6d;  
+        text-shadow: 0.2vw 0.2vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts3 {
+        position: absolute;
+        right: 2vw;
+        top: 30vh;
+        font-size: 4vw;
+        color: #ffcc6d;  
+        text-shadow: 0.2vw 0.2vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+    #Locationtexts4 {
+        position: absolute;
+        right: 2vw;
+        top: 45vh;
+        font-size: 4vw;
+        color: #ffcc6d;  
+        text-shadow: 0.2vw 0.2vw #daa33e;  
+        font-family: 'Rowdies Bold';
+    }
+        #contact-us {
+        position: absolute;
+        background-color: #452920;
+        justify-content: center;
+        text-align: center;
+        color: #ffdda9;
+        font-family: 'Rowdies Bold';
+        width: 100vw;
+        height: 15.5dvh;
+        font-size: 3.25vw;
+        top: 99.5%;    
+    }
+     #homescreen {
+                transform: translateY(10vh);
+    }
+    #tentang {
+                transform: translateY(10vh);
+    }
+    #game {
+                transform: translateY(37vh);
+    }
+    #spadesbackground {
+        
+                transform: translateY(37vh);
+    }
+    #locations {
+                transform: translateY(38vh);
+    }
+        #tentangbackground {
+            width: 97vw;
+        }
+            #locationbackground {
+        display: block;
+        width: 100vw;
+        min-height: 80dvh;
+    }
+    #curved-text{
+  position: absolute;
+  left: 50%;
+  top: 27.5vh;                /* move this up/down to sit where you want above the pin */
+  transform: translateX(-50%);
+  width: 86vw;             /* how wide the arc is relative to viewport */
+  pointer-events: none;
+  z-index: 50;
+}
+  #curved-text svg { height: 20vh; }
+  #curved-text text { font-size: 30vw; }
+            #merch1{
+        position: absolute;
+        margin-left: 3vw;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    #merch1 img {
+        width: 30vw;
+        height: 10vh;
+    }
+    #merch1:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 25vw;
+        height: 10vh;
+    }
+    #merch1:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30.5vw;
+        height: 18vh;
+        transform: translateY(-1.5vh);
+    }
+    #merch1price {
+        display: none;
+    }
+    #merch1buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 2.5vh;
+        font-size: 1.5vw;
+        line-height: 2.5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch1:hover #merch1price {
+        display: block;
+        transform: translateY(-0.5vh);
+    }
+    #merch1:hover #merch1buy {
+        display: block;
+        transform: translateX(10vw) translateY(-0.5vh);
+    }
+    #merch2 {
+        position: absolute;
+        transform: translateX(36vw);
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+        
+    }
+        #merch2 img {
+        width: 30vw;
+        height: 10vh;
+    }
+    #merch2:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 25vw;
+        height: 10vh;
+    }
+    #merch2:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30.5vw;
+        height: 18vh;
+        transform: translateX(36vw) translateY(-1.5vh);
+    }
+    #merch2price {
+        display: none;
+    }
+    #merch2buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 2.5vh;
+        font-size: 1.5vw;
+        line-height: 2.5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch2:hover #merch2price {
+        display: block;
+        transform: translateY(-0.5vh);
+    }
+    #merch2:hover #merch2buy {
+        display: block;
+        transform: translateX(10vw) translateY(-0.5vh);
+    }
+    #merch3 {
+        position: absolute;
+        transform: translateX(69vw);
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    #merch3 img{
+        width: 30vw;
+        height: 10vh;
+    }
+    
+    #merch3:hover img {
+        transform: translateY(1vh);
+        border: 0.25vw solid #452920;
+        width: 25vw;
+        height: 10vh;
+    }
+    #merch3:hover {
+        position: absolute;
+        background-color:#e6b65c;
+        border:0.25vw solid #452920;
+        border-radius: 1vw;
+        margin-left: 0;
+        width: 30.5vw;
+        height: 18vh;
+        transform: translateX(69vw) translateY(-1.5vh);
+    }
+    #merch3price {
+        display: none;
+    }
+    #merch3buy {
+        font-family: 'Rowdies Bold';
+        transform: translateX(5vw);
+        background-color:#452920;
+        color: #ffdda9;
+        border-radius: 1vw;
+        width: 10vw;
+        height: 2.5vh;
+        font-size: 1.5vw;
+        line-height: 2.5vh;
+        display: none;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    #merch3:hover #merch3price {
+        display: block;
+        transform: translateY(-0.5vh);
+    }
+    #merch3:hover #merch3buy {
+        display: block;
+        transform: translateX(10vw) translateY(-0.5vh);
+    }
+    #spadesbackground h2 {
+        color:#fff2e1;
+        font-family: 'Rowdies Bold';
+        
+    }
+    #spadesbackground h1 {
+        position: absolute;
+        color:#452920;
+        font-family: 'Rowdies Bold';
+        font-size: 4.5vw;
+        transform: translateX(23.5vw) translateY(-4.5vh);
+    }
+    #spadesbackground {
+        position: absolute;
+        gap: 18vw;
+        display: block;
+        background-color: #d04b35;
+        margin-top: 7.5vw;
+    margin-bottom: 1.5vh;
+        min-height: 40dvh;
+        height: 40dvh;
+        background-image: url('image-removebg-preview(10).png');
+        background-size: 100vw 100vh;
+          animation: movebg 20s normal linear infinite;
+    }
+            #sillydinertitle {
+        background-color: transparent; display: flex; z-index: 100000;  position: fixed; width: 57vw; height: 5vh; transform: translateX(19vw) translateY(-0vh);
+    }
+    #LETS-PLAYGAME a {
+                text-decoration: none;
+        color: #ffdda9;
+    }
+    #LETS-PLAYGAME {
+        text-decoration: none;
+        position: absolute;
+        left: 32.5%; transform: translateY(12.2vh);
+        background-color: #d04f39;
+        border: 0.6vw solid #452920;
+        width: 30vw;
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
+        height: 2vh;
+        border-radius: 1.5vw;
+        display: flex;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.25vw;
+        color: #452920;
+        font-family: 'Rowdies Bold', sans-serif;
+        z-index: 100;
+        box-shadow: 0.25vw 0.25vh;
+    }
+    #trailerthingy {
+        transform: translateX(15vw) translateY(3vh);
+        position: absolute;
+        background-color:#e6b65c;
+        width: 67vw;
+        height: 9dvh;
+        border-radius: 1vw;
+        text-align: center;
+        justify-content: center;
+        font-size: 2.5vw;
+        line-height: 10vh;
+    }
+    #happywaitress {
+        position: absolute;
+        transform: translateX(70vw) translateY(6vh);
+        width: 25vw;
+        min-height: 9dvh;
+        height: 9vh;
+        z-index: 100; 
+    }
+        #happywaiter2 {
+            position: absolute;
+        transform: translateY(5.3vh);
+        width: 25vw;
+        min-height: 10dvh;
+        height: 10dvh;
+        z-index: 100;
+    }
+            #allshadowgame {
+        position: absolute;
+        display: flex;
+                background-color: transparent;
+        width: 97vw;
+        min-width: 97vw;
+        max-width: 97vw;
+        min-height: 15dvh;
+        height: 15dvh;
+        max-height: 15dvh;
+        border-radius: 2vw;
+        box-shadow: inset 0 0 1.5vw 1.5vh rgba(0, 0, 0, 0.35);
+        z-index: 100;
+    }
+    #inside-checker-game {
+        position: absolute;
+        transform: translateX(30%); transform: translateY(12.5%);
+        background-color: #d95943;
+        width: 97vw;
+        height: 12.2dvh;
+    }
+        #inside-insidechecker-game {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(1.5vh);
+        background-color: white;
+        width: 97vw;
+        height: 0.45dvh;
+        z-index: 10;
+    }
+    #inside-insidechecker2-game {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(13.3vh);
+        background-color: white;
+        width: 97vw;
+        height: 0.45vh;
+    }
+        #checkerbackground2 {
+            display: block;
+            min-height: 15dvh;
+            height: 15dvh;
+        }
+        #tentangbackground {
+            display: block;
+            min-height: 15dvh;
+            height: 15dvh;
+        }
+        #happywaiter {
+            position: absolute;
+            width: 38vw;
+            min-height: 11.3vh;
+            height: 11.3vh;
+        }
+        #sillydinerheader {
+            display: none;
+        }
+        #TentangKami {
+            transform: translateX(42.5vw) translateY(2vh);
+            font-size: 3.2vw;
+            line-height: 10vw;
+        }
+        #underliententangkami {
+            width: 92vw;
+            height: 0.25dvh;
+            transform: translateX(3vw) translateY(2vh);
+        }
+        #underliententangkami img {
+            transform: translateX(46.5vw) translateY(-0.65vh);
+        }
+        #underliententangkami h2 {
+            font-size: 2.75vw;
+            transform: translateX(-7.5vw);
+        }
+        #underliententangkami h3 {
+            transform: translateX(-3vw);
+            font-size: 2.75vw;
+        }
+        #tentangbackground h3 {
+            transform: translateX(48vw) translateY(3vh);
+            font-size: 2vw;
+        }
+        #homescreenbutton {
+            display: none;
+        }
+        #fryes {overflow: hidden; background-color: transparent;  display: flex; z-index: 100000; position: absolute; width: 48vw; height: 24vh; transform: translateX(39vw) translateY(3vh); animation: moveUpDownMob 5s normal linear infinite}
+        header {
+            position: fixed;
+            background-color: rgb(255, 255, 255);
+            border-radius: 0;
+            margin-top: 0;
+            margin-left: 0;
+            margin-right: 0;
+        }
+            #insidechecker {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(55%);
+        background-color: #d95943;
+        width: 97vw;
+        height: 13vh;
+    }
+            #inside-insidechecker {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(7vh);
+        background-color: white;
+        width: 97vw;
+        height: 0.5vh;
+        z-index: 10;
+    }
+    #inside-insidechecker2 {
+        position: absolute;
+        transform: translateX(50%); transform: translateY(20vh);
+        background-color: white;
+        width: 97vw;
+        height: 0.5vh;
+    }
+        nav ul li a {
+            display: none;
+        }
+        nav ul li img {
+            display: block;
+            width: 5vw; height: 2vh; z-index: 2000000000000000;
+        }
+        #LETS-PLAY-BUTTON {
+            left: 8%; transform: translateY(50vh); 
+            width: 35vw;
+            height: 8vh;
+            font-size: 3vw;
+        }
+        #LETS-PLAY-BUTTON {
+            left: 8.5%; transform: translateY(50.5vh); 
+            width: 35vw;
+            height: 8vh;
+            font-size: 3vw;
+        }
+        #checkerbackground {
+
+            min-height: 30dvh;
+            
+        }
+        #all-shadow {
+            min-height: 30dvh;
+            max-height: 30dvh;
+            box-shadow: inset 0 0 3vw 3vh rgba(0, 0, 0, 0.35);
+            z-index: 100;
+        }
+        #OHMYFRIES {
+            font-size: 6vw;
+            height: 5vh;
+            line-height: 5vh;
+            width: 70vw;
+            transform: translateX(-15%) translateY(25vh);
+        }
+        #silydinerpng {
+            width: 48vw;
+            height: 7vh;
+            transform: translateY(8vh);
+            left: 3%;
+        }
+    #LETS-PLAY-BUTTON {
+        text-decoration: none;
+        position: absolute;
+        left: 16.8%; transform: translateY(15.3vh);
+        background-color: #e6b65c;
+        border: 0.4vw solid #452920;
+        width: 25vw;
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
+        height: 3vh;
+        border-radius: 1.5vw;
+        display: flex;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5vw;
+        color: #452920;
+        font-family: 'Rowdies', sans-serif;
+        z-index: 500;
+        box-shadow: 5px 10px;
+    }
+    #LETS-PLAY-BUTTON2 {
+        text-decoration: none;
+        position: absolute;
+        left: 16%; transform: translateY(15vh);
+        background-color: #e6b65c;
+        border: 0.4vw solid #452920;
+        width: 25vw;
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
+        height: 3vh;
+        border-radius: 1.5vw;
+        display: flex;
+        font-weight: bolder;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.85vw;
+        color: #452920;
+        font-family: 'Rowdies Bold', sans-serif;
+        z-index: 1000;
+        box-shadow: 5px 10px;
+    }
+    }
+    @keyframes moveUpDown {
+      0% {
+        transform: translateX(65vw) translateY(1vh)
+      }
+      50% {
+        transform: translateX(65vw) translateY(3vh)
+      }
+      100% {
+        transform: translateX(65vw) translateY(1vh)
+      }
+    }
+    @keyframes moveUpDownMob {
+      0% {
+        transform: translateX(49vw) translateY(1vh)
+      }
+      50% {
+        transform: translateX(49vw) translateY(3vh)
+      }
+      100% {
+        transform: translateX(49vw) translateY(1vh)
+      }
+    }
+    @keyframes flickerAnimation {
+  0%   { opacity:1; }
+  25%  { opacity:0.75; }
+  50% {opacity: 0.5;}
+  75% {opacity: 0.25}
+  100% { opacity:0; }}
+    /* Loading screen styles */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgb(196, 147, 147);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      z-index: 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999;
+      display: none; /* Hidden by default */
+    opacity: 1;
+    }
+    .animationflicker {
+        animation: flickerAnimation 2s;
+    }
+
+</style>
+<script>
+function home() {
+    var x = document.getElementById("homescreen")
+    var y = document.getElementById("tentangbackground")
+    var z = document.getElementById("checkerbackground2")
+    var merch = document.getElementById("spadesbackground")
+    var location = document.getElementById("locationbackground")
+    var loadingScreen = document.getElementById("loading")
+    x.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+function myFunction() {
+  var x = document.getElementById("panel");
+  var y = document.getElementById("insidepanel");
+  if (x.style.display === "none") {
+    x.style.display = "flex";
+    y.style.display = "flex";
+  } else {
+    x.style.display = "none";
+    y.style.display = "none";
+  }
+}
+function switchtotentang() {
+    var x = document.getElementById("homescreen")
+    var y = document.getElementById("tentangbackground")
+    var z = document.getElementById("checkerbackground2")
+    var merch = document.getElementById("spadesbackground")
+    var location = document.getElementById("locationbackground")
+    var loadingScreen = document.getElementById("loading")
+    y.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+function switchtogame() {
+    var x = document.getElementById("homescreen")
+    var y = document.getElementById("tentangbackground")
+    var z = document.getElementById("checkerbackground2")
+    var merch = document.getElementById("spadesbackground")
+    var location = document.getElementById("locationbackground")
+    var loadingScreen = document.getElementById("loading")
+    z.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+function switchtomerch() {
+    var x = document.getElementById("homescreen")
+    var y = document.getElementById("tentangbackground")
+    var z = document.getElementById("checkerbackground2")
+    //peck this
+    var merch = document.getElementById("spadesbackground")
+    var location = document.getElementById("locationbackground")
+    var loadingScreen = document.getElementById("loading")
+      // Show the loading screen
+    merch.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+function switchtolocation() {
+    var x = document.getElementById("homescreen")
+    var y = document.getElementById("tentangbackground")
+    var z = document.getElementById("checkerbackground2")
+    //peck this
+    var merch = document.getElementById("spadesbackground")
+    var location = document.getElementById("locationbackground")
+    var loadingScreen = document.getElementById("loading")
+      // Show the loading screen
+    location.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }
+(function() {
+  // Product data
+  const products = {
+    tshirt: [
+      { name: 'Fryes Tee', price: 'Rp. 50.000', image: 'Untitled-removebg-preview.png'},
+      { name: 'Fryes Redtee', price: 'Rp 45.000', image: 'Untitled-removebg-preview(1).png'},
+      { name: 'Fryes Hoodie', price: 'Rp. 80.000', image: 'hoodieblakc.png' }
+    ],
+    mug: [
+      { name: 'Heart Mug', price: 'Rp. 25.000', image: 'mug1.png' },
+      { name: 'Fryes Mug',  price: 'Rp. 30.000', image: 'Mug 2.png' },
+      { name: 'Hot Mug', price: 'Rp. 25.000', image: 'mug3blac.png'}
+    ],
+    hat: [
+      { name: 'WhiteFries Cap', price: 'Rp. 45.000', image: 'whitefries.png' },
+      { name: 'Red Fries', price: 'Rp. 50.000', image: 'Untitled-removebg-preview(2).png'},
+      { name: 'Fries Cap', price: 'Rp. 55.000', image: 'fryesblack-removebg-preview.png' },
+
+    ],
+  };
+
+  // Default state 
+  let currentCategory = 'tshirt';
+  let currentIndex = 0;
+
+  // Elements
+  const blackswatchcircle = document.getElementById('blackswatch');
+  const yellowswatchcircle = document.getElementById('yellowswatch');
+  const redswatchcircle = document.getElementById('redswatch');
+  const imgEl = document.getElementById('merch-product-image');
+  const nameEl = document.getElementById('product-name');
+  const priceEl = document.querySelector('.product-price');
+  const leftArrow = document.querySelector('.arrow-left');
+  const rightArrow = document.querySelector('.arrow-right');
+  const leftTab = document.querySelector('.merch-tabs .left-tab');
+  const centerTab = document.querySelector('.tab-center-circle');
+  const rightTab = document.querySelector('.merch-tabs .right-tab');
+
+  let count = 2; // Used for color swatches
+
+  // --- UPDATED TAB SWAPPING DATA (WITH CENTER and SIDE PATHS) ---
+
+  const merchItems = {
+    mug: { 
+      category: 'mug', 
+      centerPath: 'brown mug.png',  // Use this when MUG is in the center
+      sidePath: 'yellow mug.png',    // Use this when MUG is on the side
+      label: 'MUG', 
+      alt: 'Mug icon' 
+    },
+    tshirt: { 
+      category: 'tshirt', 
+      centerPath: 'brown shirt(1).png', 
+      sidePath: 'yellow shirt.png', 
+      label: 'OUTFITS', 
+      alt: 'T-Shirt icon' 
+    },
+    hat: { 
+      category: 'hat', 
+      centerPath: 'brown hat.png', 
+      sidePath: 'yellow hat.png', 
+      label: 'HAT', 
+      alt: 'Hat icon' 
+    }
+  };
+
+  // State of the categories currently displayed in the UI positions
+  let leftItem = merchItems.mug;
+  let centerItem = merchItems.tshirt;
+  let rightItem = merchItems.hat;
+
+  // DOM element selectors
+  const leftTabIcon = leftTab.querySelector('.tab-icon');
+  const leftTabLabel = leftTab.querySelector('.tab-label');
+  const centerTabIcon = centerTab.querySelector('.center-icon');
+  const rightTabIcon = rightTab.querySelector('.tab-icon');
+  const rightTabLabel = rightTab.querySelector('.tab-label');
+
+
+  function updateUI() {
+    // Color Swatch Logic (based on your existing code)
+    if (count == 1) {
+        blackswatchcircle.classList.add('color-swatchoutline');
+        yellowswatchcircle.classList.remove('color-swatchoutline');
+        redswatchcircle.classList.remove('color-swatchoutline');
+    }
+    if (count == 2) {
+        blackswatchcircle.classList.remove('color-swatchoutline');
+        yellowswatchcircle.classList.add('color-swatchoutline');
+        redswatchcircle.classList.remove('color-swatchoutline');
+    } 
+    if (count == 3) {
+        blackswatchcircle.classList.remove('color-swatchoutline');
+        yellowswatchcircle.classList.remove('color-swatchoutline');
+        redswatchcircle.classList.add('color-swatchoutline');
+    } 
+    
+    const list = products[currentCategory];
+    if (!list) return;
+
+    // Wrap around index
+    if (currentIndex < 0) currentIndex = list.length - 1;
+    if (currentIndex >= list.length) currentIndex = 0;
+
+    const p = list[currentIndex];
+    imgEl.src = p.image;
+    nameEl.textContent = p.name;
+    priceEl.textContent = p.price;
+  }
+
+  // --- CRITICALLY UPDATED renderTabs FUNCTION for Dynamic Images ---
+  function renderTabs() {
+    // 1. Update Center Tab: Always use the centerPath
+    centerTabIcon.src = centerItem.centerPath;
+    centerTabIcon.alt = centerItem.alt;
+    currentCategory = centerItem.category;
+
+    // 2. Update Left Tab: Always use the sidePath
+    leftTabIcon.src = leftItem.sidePath;
+    leftTabIcon.alt = leftItem.alt;
+    leftTabLabel.textContent = leftItem.label;
+
+    // 3. Update Right Tab: Always use the sidePath
+    rightTabIcon.src = rightItem.sidePath;
+    rightTabIcon.alt = rightItem.alt;
+    rightTabLabel.textContent = rightItem.label;
+
+    // 4. Update aria-pressed for accessibility and visual highlighting
+    leftTab.setAttribute('aria-pressed', 'false');
+    centerTab.setAttribute('aria-pressed', 'true');
+    rightTab.setAttribute('aria-pressed', 'false');
+
+    // Reset index to 0 when category changes
+    currentIndex = 0;
+    
+    // 5. Trigger the global function that changes the actual merch display
+    updateUI();
+  }
+
+  // --- swapWithCenter FUNCTION (Swap Logic) ---
+  function swapWithCenter(sidePosition) {
+    let sideItemRef;
+
+    if (sidePosition === 'left') {
+        count = 2;
+        sideItemRef = leftItem;
+    } else if (sidePosition === 'right') {
+        sideItemRef = rightItem;
+        count = 2;
+    } else {
+        return; 
+    }
+
+    // Perform the data swap
+    const newCenterItem = sideItemRef;
+    const newSideItem = centerItem;
+    centerItem = newCenterItem;
+
+    if (sidePosition === 'left') {
+        leftItem = newSideItem;
+        count = 2;
+    } else {
+        count = 2;
+        rightItem = newSideItem;
+    }
+
+    // Update the visual tabs and trigger the merch display change
+    renderTabs();
+  }
+
+  // Arrows (Your existing arrow logic)
+  leftArrow.addEventListener('click', () => {
+    if (count < 2) {
+      count = 3
+    } else {
+      count = count-1
+    }
+    // Color Swatch Logic
+    if (count == 1) {
+      blackswatchcircle.classList.add('color-swatchoutline');
+      yellowswatchcircle.classList.remove('color-swatchoutline');
+      redswatchcircle.classList.remove('color-swatchoutline');
+    }
+    if (count == 2) {
+      blackswatchcircle.classList.remove('color-swatchoutline');
+      yellowswatchcircle.classList.add('color-swatchoutline');
+      redswatchcircle.classList.remove('color-swatchoutline');
+    } 
+    if (count == 3) {
+      blackswatchcircle.classList.remove('color-swatchoutline');
+      yellowswatchcircle.classList.remove('color-swatchoutline');
+      redswatchcircle.classList.add('color-swatchoutline');
+    } 
+    currentIndex--;
+    updateUI();
+  });
+  
+  rightArrow.addEventListener('click', () => {
+    if (count > 2) {
+      count = 1;
+    } else {
+      count = count+1
+    }
+    // Color Swatch Logic
+    if (count == 1) {
+      blackswatchcircle.classList.add('color-swatchoutline');
+      yellowswatchcircle.classList.remove('color-swatchoutline');
+      redswatchcircle.classList.remove('color-swatchoutline');
+    }
+    if (count == 2) {
+      blackswatchcircle.classList.remove('color-swatchoutline');
+      yellowswatchcircle.classList.add('color-swatchoutline');
+      redswatchcircle.classList.remove('color-swatchoutline');
+    } 
+    if (count == 3) {
+      blackswatchcircle.classList.remove('color-swatchoutline');
+      yellowswatchcircle.classList.remove('color-swatchoutline');
+      redswatchcircle.classList.add('color-swatchoutline');
+    } 
+    currentIndex++;
+    updateUI();
+  });
+
+  // Tabs (Event Listeners)
+  leftTab.addEventListener('click', () => {
+    if (centerItem.category !== leftItem.category) {
+        swapWithCenter('left');
+    }
+  });
+
+  rightTab.addEventListener('click', () => {
+    if (centerItem.category !== rightItem.category) {
+        swapWithCenter('right');
+    }
+  });
+
+  // Initialize
+  renderTabs(); 
+})();
+          // --- NEW BOUGHT NOTIFICATION FUNCTION ---
+          function bought() {
+            const notificationEl = document.getElementById("bought-notification")
+              // 1. Show the element immediately by setting opacity to 1
+              notificationEl.style.opacity = '1';
+
+              // 2. Wait 1.5 seconds (leaving 0.5s for the CSS transition to fade it out)
+              setTimeout(() => {
+                  // 3. Start the fade-out (opacity transitions to 0 over 0.5s)
+                  notificationEl.style.opacity = '0';
+              }, 1500); // 1.5s delay
+          }
+</script> 
